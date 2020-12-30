@@ -12,8 +12,8 @@ The [`Demo` App ](#Demo) shows the available plugin options, as well as using th
 Future versions will support layout options introduced in iOS 14.
 
 
-![ ](https://raw.githubusercontent.com/j-crosson/cordova-plugin-split-view/images/landsc.png)
-![ ](https://raw.githubusercontent.com/j-crosson/cordova-plugin-split-view/images/portrait.png)
+![ ](https://raw.githubusercontent.com/j-crosson/cordova-plugin-split-view/main/images/landsc.png)
+![ ](https://raw.githubusercontent.com/j-crosson/cordova-plugin-split-view/main/images/portrait.png)
 
 
 ## Parent view methods
@@ -192,55 +192,6 @@ Sets max width, in points, of the primary view . See Apple Documentation for UIS
 cordova.plugins.SplitView.maximumPrimaryColumnWidth = 100.0
 ```
 
-<strong>closed</strong>
-
- function ( results,status)
-
-| Param | Type | Description |
-| --- | --- | --- |
-| results | String |results returned on close|
-| status | enum | results status |
-
-### results
-String sent by “sendResults” in secondary view.
-
-### status
-SplitView.dismissType.swipe         Dismissed by swipe
-SplitView.dismissType.left             Dismissed by left button
-SplitView.dismissType.right           Dismissed by right button
-
-Only available in parent view.
-
-```javascript
-var onViewClosed = function ( results,status) {
-	if(status == cordova.plugins.SplitView.dismissType.left) {
-		//do something
-	}
-}
-
-cordova.plugins.SplitView.closed = onViewClosed;
-```
-
-<strong>selected</strong>
-
- function ( itemString)
-
-| Param | Type | Description |
-| --- | --- | --- |
-| itemString | String | selection string |
-
-### itemString
-String sent in primary view by “primaryItemSelected”. Typically reflects an item selection but could be any action.
-
-Only available in secondary view.
-
-```javascript
-var onSelected = function ( itemString) {
-	//do something
-}
-
-cordova.plugins.SplitView.selected= onSelected;
-```
 
 ### barTintColor
 ```javascript
@@ -299,6 +250,63 @@ Sets secondary view background color
 | red | Number | red 0-255 |
 | green | Number | green 0-255 |
 | blue | Number | blue 0-255 |
+
+## Callbacks
+
+### closed
+
+ function ( results,status)
+
+| Param | Type | Description |
+| --- | --- | --- |
+| results | String |results returned on close|
+| status | enum | results status |
+
+**results**
+
+String sent by “sendResults” in secondary view.
+
+**status**
+
+| Value  | Status |
+| --- | --- |
+|SplitView.dismissType.swipe | Dismissed by swipe|
+|SplitView.dismissType.left | Dismissed by left button|
+|SplitView.dismissType.right | Dismissed by right button|
+
+Only available in parent view.
+
+```javascript
+var onViewClosed = function ( results,status) {
+	if(status == cordova.plugins.SplitView.dismissType.left) {
+		//do something
+	}
+}
+
+cordova.plugins.SplitView.closed = onViewClosed;
+```
+
+### selected
+
+ function ( itemString)
+
+| Param | Type | Description |
+| --- | --- | --- |
+| itemString | String | selection string |
+
+**itemString**
+
+String sent in primary view by “primaryItemSelected”. Typically reflects an item selection but could be any action.
+
+Only available in secondary view.
+
+```javascript
+var onSelected = function ( itemString) {
+	//do something
+}
+
+cordova.plugins.SplitView.selected= onSelected;
+```
 
 
 
@@ -490,7 +498,7 @@ Default is TRUE
 
 ## Demo
 
-- https://github.com/j-crosson/cordova-plugin-split-view/Demo
+- https://github.com/j-crosson/cordova-plugin-split-view/main/Demo
 
 The easiest way to run the demo is to download (or clone) the entire repo and run the project in Demo from Xcode. 
 
