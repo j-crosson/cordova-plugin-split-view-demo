@@ -15,6 +15,10 @@ Future versions will support layout options introduced in iOS 14.
 ![ ](https://raw.githubusercontent.com/j-crosson/cordova-plugin-split-view/main/images/landsc.png)
 ![ ](https://raw.githubusercontent.com/j-crosson/cordova-plugin-split-view/main/images/portrait.png)
 
+## Installation
+```bash
+cordova plugin add cordova-plugin-split-view
+```
 
 ## Parent view methods
 
