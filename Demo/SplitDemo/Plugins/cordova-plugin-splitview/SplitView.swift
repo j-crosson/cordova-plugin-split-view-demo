@@ -96,8 +96,8 @@ import WebKit
         initialProperties.barTintColor=setColor(red: command.arguments[0] as? CGFloat, green: command.arguments[1] as? CGFloat, blue: command.arguments[2] as? CGFloat, alpha: 1)
     }
     
-    @objc(preferredPrimaryColumnWidthFraction :)
-    func preferredPrimaryColumnWidthFraction (command: CDVInvokedUrlCommand) {
+    @objc(primaryColumnWidth:)
+    func primaryColumnWidth(command: CDVInvokedUrlCommand) {
         initialProperties.primaryColumnWidthfraction = command.arguments[0] as? CGFloat
     }
     
@@ -176,6 +176,7 @@ import WebKit
 //  if not set, uses Apple defaults
 //
 struct InitialProperties {
+    var isEmbedded: Bool = false
     var masterURL: String = "index1.html"
     var detailURL: String = "index2.html"
     var primaryColumnWidthfraction: CGFloat?
@@ -205,7 +206,7 @@ struct InitialProperties {
 @objcMembers public class EmbedSplit: NSObject {
  
     private var initialProperties = InitialProperties()
-
+    
     //
     // properties that work with objective-c; same behavior in swift.
     //
@@ -312,6 +313,7 @@ struct InitialProperties {
 
     @objc(show:)
     func show(_ appWindow: UIWindow) {
+        initialProperties.isEmbedded = true
         let splitViewController = RtViewController(iprop: initialProperties, nibName: nil, bundle: nil)
         appWindow.rootViewController = splitViewController
         appWindow.makeKeyAndVisible()
@@ -355,7 +357,7 @@ protocol itemSelectionDelegate: class {
             primaryViewController = (UINavigationController(rootViewController: viewControllerMasterTable!))
             
         } else {
-            viewControllerMaster = SpViewController(backgroundColor: iprop.masterBackgroundColor, page: iprop.masterURL)
+            viewControllerMaster = SpViewController(backgroundColor: iprop.masterBackgroundColor, page: iprop.masterURL, isEmbedded: iprop.isEmbedded)
             primaryViewController = (UINavigationController(rootViewController: viewControllerMaster!))
         }
 
@@ -495,11 +497,13 @@ extension SpViewControllerTable: UISplitViewControllerDelegate {
     
     weak var delegate: itemSelectionDelegate?
     var initialBackgroundColor: UIColor?
+    var embedded: Bool = false
     
-    init(backgroundColor: UIColor?, page: String?) {
+    init(backgroundColor: UIColor?, page: String?, isEmbedded: Bool) {
         super.init(nibName: nil, bundle: nil)
         startPage = page
         initialBackgroundColor = backgroundColor
+        embedded = isEmbedded
     }
    
     required init?(coder: NSCoder) {
@@ -507,12 +511,15 @@ extension SpViewControllerTable: UISplitViewControllerDelegate {
     }
        
     override func viewDidLoad() {
+        if(!embedded) {
         launchView = UIView(frame: view.bounds)
         launchView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
+        }
         super.viewDidLoad()
-        view.backgroundColor = initialBackgroundColor
+        if(!embedded) {
         launchView.backgroundColor = initialBackgroundColor
         view.addSubview(launchView)
+        }
     }
     //
     //  Workaround for a leak.
