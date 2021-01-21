@@ -17,6 +17,10 @@ To run the demo that simulates a root split view, rename indexRoot.html to index
 To demo the Split View as an actual root view, in the file AppDelegate.m comment out the current code and use the code that is currently commented out.
 
 
+![ ](https://raw.githubusercontent.com/j-crosson/cordova-plugin-split-view-demo/main/images/landsc.png)
+![ ](https://raw.githubusercontent.com/j-crosson/cordova-plugin-split-view-demo/main/images/portrait.png)
+
+
 Here’s the Demo code that launches the embedded split view:
 
 
