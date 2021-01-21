@@ -10,7 +10,7 @@ Native iOS Split View Demo
 The easiest way to run the demo is to download (or clone) the repo and run the project in Demo from Xcode. 
 
 
-The demo by default shows both the web and table view options in a modal view, supporting both light and dark mode. Typically the split view will be a root view. 
+The demo by default shows both the web and table view options in a modal view, supporting both light and dark mode. Typically the split view will be the app window's root view. 
 
 To run the demo that simulates a root split view, rename indexRoot.html to index.html. In index.js, un-comment the line indicated in the “root demo” comment.
 
