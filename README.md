@@ -14,7 +14,7 @@ The demo by default shows both the web and table view options in a modal view, s
 
 To run the demo that simulates a root split view, rename indexRoot.html to index.html. In index.js, un-comment the line indicated in the “root demo” comment.
 
-To demo the Split View as an actual root view, in the file AppDelegate.m comment out the current code and use the code that is currently commented out.
+To demo the Split View as an actual root view, in the file AppDelegate.m comment out the current code and use the code that is currently commented out. A real app would be structured differently: the embedding demo was constructed to fit in a Cordova-generated app.
 
 
 ![ ](https://raw.githubusercontent.com/j-crosson/cordova-plugin-split-view-demo/main/images/landsc.png)
