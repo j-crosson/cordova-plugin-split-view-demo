@@ -1,12 +1,84 @@
 cordova.define("cordova-plugin-splitview.SplitView", function(require, exports, module) {
+
 var exec = require('cordova/exec');
 
 var PLUGIN_NAME = 'SplitView';
 
 var SplitView = function() {};
 
+
+
 //
-// show modal split view
+// create and show split view
+//
+
+SplitView.prototype.showView = function (viewProps, primaryProps, secondaryProps, supProps,compactProps, success, error) {
+exec(success, error, 'SplitView', 'showView', [viewProps, primaryProps, secondaryProps, supProps,compactProps]);
+};
+
+//
+// show or hide view
+//
+
+SplitView.prototype.display = function (show_hide, view, success, error) {
+        exec(success, error, 'SplitView', 'display', [show_hide,view]);
+};
+
+//
+// send message to view
+//
+
+SplitView.prototype.sendMessage = function (destination, message, success, error) {
+        exec(success, error, 'SplitView', 'sendMessage', [destination,message]);
+};
+
+//
+// set properties of child view
+//
+
+SplitView.prototype.setProperties = function ( properties, success, error) {
+        exec(success, error, 'SplitView', 'setProperties', [properties]);
+};
+
+//
+// set properties of split view
+//
+
+SplitView.prototype.setSplitViewProperties = function ( properties, success, error) {
+            exec(success, error, 'SplitView', 'setSplitViewProperties', [properties]);
+};
+ 
+//
+//Init Child View
+//Call for all views.  Typically called immediately after "device ready"
+//
+SplitView.prototype.initChild = function(){
+            exec(null, null, "SplitView", "initChild",[""]);
+};
+
+//
+// select tab
+//
+
+SplitView.prototype.selectTab = function ( tab, success, error) {
+    exec(success, error, 'SplitView', 'selectTab', [tab]);
+};
+
+//
+// recieve string from sendMessage
+//
+
+SplitView.prototype.onMessage = function(item) {
+        this.message(item);
+};
+
+
+
+// The following is Classic View Only
+
+
+//
+// show modal split view  ***deprecated, Classic View Only***
 //
 SplitView.prototype.show = function (primaryURL, secondaryURL, animated, success, error) {
     
@@ -15,7 +87,8 @@ SplitView.prototype.show = function (primaryURL, secondaryURL, animated, success
     }
     exec(success, error, 'SplitView', 'show', [primaryURL,secondaryURL,animated]);
 };
-    
+
+
 SplitView.prototype.initSplitView = function () {
     
     for (let key of Object.keys(this)) {
@@ -23,7 +96,8 @@ SplitView.prototype.initSplitView = function () {
     }
     exec(null, null, 'SplitView', 'initSplit', []);
 };
-                      
+
+
 SplitView.prototype.setBarTintColor = function (red,green,blue) {
         exec(null, null, 'SplitView', 'barTintColor', [red,green,blue]);
 };
@@ -85,5 +159,6 @@ SplitView.prototype.dismissType ={
 };
 
 module.exports = new SplitView();
+
 
 });

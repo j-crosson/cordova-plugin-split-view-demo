@@ -1,73 +1,119 @@
 cordova.define("cordova-plugin-splitview.SplitView", function(require, exports, module) {
+
 var exec = require('cordova/exec');
 
 var PLUGIN_NAME = 'SplitView';
 
 var SplitView = function() {};
 
+
+
 //
-// show modal split view
+// create and show split view
+//
+
+SplitView.prototype.showView = function (viewProps, primaryProps, secondaryProps, supProps,compactProps, success, error) {
+exec(success, error, 'SplitView', 'showView', [viewProps, primaryProps, secondaryProps, supProps,compactProps]);
+};
+
+//
+// show or hide view
+//
+
+SplitView.prototype.display = function (show_hide, view, success, error) {
+        exec(success, error, 'SplitView', 'display', [show_hide,view]);
+};
+
+//
+// send message to view
+//
+
+SplitView.prototype.sendMessage = function (destination, message, success, error) {
+        exec(success, error, 'SplitView', 'sendMessage', [destination,message]);
+};
+
+//
+// set properties of child view
+//
+
+SplitView.prototype.setProperties = function ( properties, success, error) {
+        exec(success, error, 'SplitView', 'setProperties', [properties]);
+};
+
+//
+// set properties of split view
+//
+
+SplitView.prototype.setSplitViewProperties = function ( properties, success, error) {
+            exec(success, error, 'SplitView', 'setSplitViewProperties', [properties]);
+};
+ 
+//
+//Init Child View
+//Call for all views.  Typically called immediately after "device ready"
+//
+SplitView.prototype.initChild = function(){
+            exec(null, null, "SplitView", "initChild",[""]);
+};
+
+//
+// select tab
+//
+
+SplitView.prototype.selectTab = function ( tab, success, error) {
+    exec(success, error, 'SplitView', 'selectTab', [tab]);
+};
+
+//
+// recieve string from sendMessage
+//
+
+SplitView.prototype.onMessage = function(item) {
+        this.message(item);
+};
+
+
+
+// The following is Classic View Only
+
+
+//
+// show modal split view  ***deprecated, Classic View Only***
 //
 SplitView.prototype.show = function (primaryURL, secondaryURL, animated, success, error) {
+    
+    for (let [a,b] of Object.entries(this)) {
+        exec(null, null, 'SplitView', a, [b]);
+    }
     exec(success, error, 'SplitView', 'show', [primaryURL,secondaryURL,animated]);
 };
 
+
 SplitView.prototype.initSplitView = function () {
-        exec(null, null, 'SplitView', 'initSplit', []);
-};
-                   
-SplitView.prototype.primaryTitle = function (titleString) {
-    exec(null, null, 'SplitView', 'primaryTitle', [titleString]);
-};
-                              
-SplitView.prototype.secondaryTitle = function (titleString) {
-    exec(null, null, 'SplitView', 'secondaryTitle', [titleString]);
+    
+    for (let key of Object.keys(this)) {
+        delete this[key];
+    }
+    exec(null, null, 'SplitView', 'initSplit', []);
 };
 
-SplitView.prototype.enableLeftButton = function (titleString) {
-    exec(null, null, 'SplitView', 'leftButtonTitle', [titleString]);
-};
-    
-SplitView.prototype.enableRightButton = function (titleString) {
-    exec(null, null, 'SplitView', 'rightButtonTitle', [titleString]);
-};
-    
-SplitView.prototype.barTintColor = function (red,green,blue) {
+
+SplitView.prototype.setBarTintColor = function (red,green,blue) {
         exec(null, null, 'SplitView', 'barTintColor', [red,green,blue]);
 };
     
-SplitView.prototype.tintColor = function (red,green,blue) {
+SplitView.prototype.setTintColor = function (red,green,blue) {
     exec(null, null, 'SplitView', 'tintColor', [red,green,blue]);
 };
     
-SplitView.prototype.secondaryBackgroundColor = function (red,green,blue) {
+SplitView.prototype.setSecondaryBackgroundColor = function (red,green,blue) {
     exec(null, null, 'SplitView', 'secondaryBackgroundColor', [red,green,blue]);
 };
     
-SplitView.prototype.primaryBackgroundColor = function (red,green,blue) {
+SplitView.prototype.setPrimaryBackgroundColor = function (red,green,blue) {
     exec(null, null, 'SplitView', 'primaryBackgroundColor', [red,green,blue]);
 };
     
-SplitView.prototype.maximumPrimaryColumnWidth = function (colWidth) {
-    exec(null, null, 'SplitView', 'maximumPrimaryColumnWidth', [colWidth]);
-};
-
-SplitView.prototype.minimumPrimaryColumnWidth = function (colWidth) {
-    exec(null, null, 'SplitView', 'minimumPrimaryColumnWidth', [colWidth]);
-};
-               
-SplitView.prototype.displayModeButtonItem = function (showItem) {
-    exec(null, null, 'SplitView', 'displayModeButtonItem', [showItem]);
-};
- 
-SplitView.prototype.preferredPrimaryColumnWidthFraction = function(width){
-    exec(null, null, "SplitView", "primaryColumnWidth",[width]);
-};
-                
-SplitView.prototype.fullscreen = function(screen){
-    exec(null, null, "SplitView", "fullscreen",[screen]);
- };
-
 // returns result string
 //   status
 //    dismissType.swipe -- dismissed by swipe
@@ -75,7 +121,7 @@ SplitView.prototype.fullscreen = function(screen){
 //    dismissType.right -- dismissed by right button
 //
 SplitView.prototype.onClosed = function(results,status){
-            splitViewClosed(results,status);
+            this.closed(results,status);
 };
                               
 //Notifies Secondary View of action in Primary View
@@ -84,8 +130,8 @@ SplitView.prototype.primaryItemSelected = function(itemString){
 };
 
               
-//Secondary View
-               
+//Secondary
+    
 //Init Secondary View
 // only use for secondary view.  Typically called immediately after "device ready"
 SplitView.prototype.initSecondary = function(){
@@ -93,15 +139,11 @@ SplitView.prototype.initSecondary = function(){
 };
 
 SplitView.prototype.onSelected = function(item){
-    doSelected(item);
+    this.selected(item);
 };
 
 //Table View
- 
-SplitView.prototype.useTableView = function(useView){
-    exec(null, null, "SplitView", "useTableView",[useView]);
-};
-    
+     
 SplitView.prototype.addTableItem = function(itemString,image){
     exec(null, null, "SplitView", "addTableItem",[itemString,image]);
 };

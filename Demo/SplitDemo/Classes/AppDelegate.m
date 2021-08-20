@@ -32,42 +32,8 @@
 
 - (BOOL)application:(UIApplication*)application didFinishLaunchingWithOptions:(NSDictionary*)launchOptions
 {
-   self.viewController = [[MainViewController alloc] init];
-   return [super application:application didFinishLaunchingWithOptions:launchOptions];
+    self.viewController = [[MainViewController alloc] init];
+    return [super application:application didFinishLaunchingWithOptions:launchOptions];
 }
 
 @end
-
- 
-/*
-#import "AppDelegate.h"
-#import "MainViewController.h"
-#import "SplitDemo-Swift.h"
-
-@implementation AppDelegate
-
-@synthesize window;
-
-- (BOOL)application:(UIApplication*)application didFinishLaunchingWithOptions:(NSDictionary*)launchOptions
-{
-    CGRect screenBounds = [[UIScreen mainScreen] bounds];
-
-    self.window = [[UIWindow alloc] initWithFrame:screenBounds];
-    self.window.autoresizesSubviews = YES;
-
-    EmbedSplit * es = [[EmbedSplit alloc] init];
-    UIColor *colorLight = [UIColor colorWithRed:0.894 green:0.894 blue:0.894 alpha:1];
-    UIColor *colorDark = [UIColor colorWithRed:0.12 green:0.12 blue:0.12 alpha:1];
-    [es setPrimaryBackgroundColor:colorLight :colorDark];
-    [es setSecondaryBackgroundColor:colorLight :colorDark];
-    es.primaryTitle = @"Primary";
-    es.secondaryTitle = @"Secondary";
-    [es show:self.window ];
-    
-    return YES;
-}
-
-@end
-
-
-*/
