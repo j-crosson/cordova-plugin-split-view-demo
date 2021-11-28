@@ -16,6 +16,13 @@ class SpViewControllerChild: CDVViewController {
     var webViewMessage: ((String, String, SplitViewAction) -> Void)?
     var childProperties = ViewProps()
 
+    enum ViewEvents: String {
+        case buttonEvent = "0"
+        case tabBarEvent = "1"
+        //previous versions had separate right and left tap events as well as a menu-item-selected event
+        //now each action has a unique ID 
+   }
+
     init(backgroundColor: UIColor?, page: String) {
         super.init(nibName: nil, bundle: nil)
         startPage = page
@@ -61,10 +68,101 @@ class SpViewControllerChild: CDVViewController {
         if props.isEmpty {
             return
         }
+        guard let navController = navigationController else {
+            return
+        }
         if childProperties.decodeProperties(json: props) {
             navigationController?.navigationBar.tintColor =? childProperties.setColor(childProperties.viewProps.tintColor)
             navigationController?.navigationBar.barTintColor =? childProperties.setColor(childProperties.viewProps.barTintColor)
+            if let rightButton = childProperties.viewProps.barButtonRight {
+                setButton(navController, buttonItem: rightButton, isRight: true, leftItemsSuppBack: false)
+            }
+            if let leftButton = childProperties.viewProps.barButtonLeft {
+                setButton(navController, buttonItem: leftButton, isRight: false, leftItemsSuppBack: childProperties.viewProps.barButtonLeft?.leftItemsSupplementBackButton ?? false)
+            }
         }
+    }
+
+    func setButton(_ navController: UINavigationController, buttonItem: ViewProperties.BarButtonItem, isRight: Bool, leftItemsSuppBack: Bool) {
+        //
+        // system items for buttons
+        //
+        let sysItem: [String: UIBarButtonItem.SystemItem] = ["done": .done, "cancel": .cancel, "edit": .edit, "save": .save, "add": .add, "compose": .compose, "reply": .reply, "action": .action, "organize": .organize, "bookmarks": .bookmarks, "search": .search, "refresh": .refresh, "stop": .stop, "camera": .camera, "trash": .trash, "play": .play, "pause": .pause, "rewind": .rewind, "fastForward": .fastForward, "undo": .undo, "redo": .redo]
+
+        guard let buttonType = buttonItem.type else {
+            return
+        }
+        //
+        // this allows the left button to coexist with rather than replace a system left button
+        //
+        navController.navigationBar.topItem?.leftItemsSupplementBackButton = leftItemsSuppBack
+        if #available(iOS 14.0, *) {
+        let menuAttributes: [String: UIMenuElement.Attributes] = ["destructive": .destructive, "disabled": .disabled, "hidden": .hidden]
+        var primaryAct: UIAction?
+        var barButtonItm: UIBarButtonItem?
+        var theMenu: UIMenu?
+
+        primaryAct =  UIAction( identifier: UIAction.Identifier(buttonItem.identifier ?? ""), handler: buttonHandler)
+        if let menuElements = buttonItem.menuElements {
+            var menuChildren = [UIAction]()
+            for item in menuElements {
+                var  atts: UIKit.UIMenuElement.Attributes = []
+                if let attributes = item.attributes {
+                    for attribute in attributes {
+                        if let menuAttribute = menuAttributes[attribute] {
+                            atts.insert(menuAttribute)
+                        }
+                    }
+                }
+                menuChildren.append( UIAction(title: item.title ?? "", image: newImage(image: item.menuImage), identifier: UIAction.Identifier(item.identifier ?? ""), attributes: atts, handler: buttonHandler))
+            }
+            theMenu = UIMenu(title: buttonItem.menuTitle ?? "", options: .displayInline, children: menuChildren)
+            //we don't test for all bad behavior, in those cases we default to "menu"
+            if buttonItem.menuType == "menuLongPress" {
+                primaryAct =  UIAction(identifier: UIAction.Identifier(buttonItem.identifier ?? ""), handler: buttonHandler)
+            } else {
+                primaryAct = nil
+            }
+        }
+
+        switch buttonType {
+        case "text":
+            guard let bartext = buttonItem.title else {
+                return
+            }
+            barButtonItm = UIBarButtonItem( title: bartext, primaryAction: primaryAct, menu: theMenu)
+
+        case "system":
+            guard let sysitem = buttonItem.title, let sysEnum = sysItem[sysitem] else {
+                return
+            }
+            barButtonItm = UIBarButtonItem( systemItem: sysEnum, primaryAction: primaryAct, menu: theMenu)
+
+        case  "image":
+            barButtonItm = UIBarButtonItem( image: newImage(image: buttonItem.image), primaryAction: primaryAct, menu: theMenu)
+
+        default:
+            return
+        }
+
+        if isRight {
+            navController.navigationBar.topItem?.rightBarButtonItem = barButtonItm
+            } else {
+            navController.navigationBar.topItem?.leftBarButtonItem = barButtonItm
+            }
+        }
+    }
+
+    @available(iOS 14.0, *)
+    func buttonHandler(from action: UIAction) {
+        eventHandle(ViewEvents.buttonEvent, data: action.identifier.rawValue)
+    }
+
+    //
+    // handles all child events
+    //
+    func eventHandle(_ event: ViewEvents, data: String = "" ) {
+        commandDelegate.evalJs( "cordova.plugins.SplitView.onAction('\(event.rawValue)','\(data)');")
     }
 
     func initChild() {

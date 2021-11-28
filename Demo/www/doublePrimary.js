@@ -5,8 +5,12 @@ function onDeviceReady()
 {
     navigator.splashscreen.hide();
     cordova.plugins.SplitView.message = recievedMessage;
+    cordova.plugins.SplitView.action = handleEvents;
 }
 
+const  testButtonOptions = ["done","cancel","edit","save","add","compose","reply","action","organize","bookmarks","search","refresh","stop","camera","trash","play","pause","rewind","fastForward","undo","redo"];
+let testButtonIndex = -1;
+let theSize = testButtonOptions.length - 1;
 
 function selectItem(item)
 {
@@ -24,4 +28,14 @@ function selectItem(item)
 function recievedMessage(item)
 {
     selectItem(item);
+}
+function handleEvents(event,data)
+{//console.log(data);
+    if((event === cordova.plugins.SplitView.viewEvents.buttonEvent) && (data === "rightTap"))
+    {
+        if (testButtonIndex++ == theSize)
+            testButtonIndex = 0;
+        let viewProps ='{ "barButtonRight": {"type":"system","identifier": "rightTap","title":"'+testButtonOptions[testButtonIndex]+'"} }';
+        cordova.plugins.SplitView.setProperties(viewProps,null,null);//console.log(viewProps)
+    }
 }

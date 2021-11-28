@@ -4,32 +4,38 @@ document.addEventListener('deviceready', onDeviceReady, false);
 function onDeviceReady() {
     navigator.splashscreen.hide();
     cordova.plugins.SplitView.initChild();
-    cordova.plugins.SplitView.selected = doSelected;
+   // cordova.plugins.SplitView.selected = doSelected;
     cordova.plugins.SplitView.message = recievedMessage;
+    cordova.plugins.SplitView.action = handleEvents;
 }
 
 function recievedMessage(item)
 { 
     //
-    // The TabBar sends a "decorated" selected item index:
-    // there are user-specified strings prepended and appended to the index  string
-    // For this example, a "1" is prepended to the index so a
-    // value greater than "10" indicates message is from Tab View
-    // less than 10 is from split view
+    // Keep  TabBar in sync with two column layout
+    //
     let tabItem = parseInt(item,10);
-    if(tabItem < 10) //from other view
+    cordova.plugins.SplitView.selectTab(tabItem);
+    doSelected(tabItem,false);
+    //don't forward message; message is from destination views
+
+}
+
+function handleEvents(event,data)
+{
+    //
+    // The TabBar sends a string representation of the tag number
+    //
+    if((event === cordova.plugins.SplitView.viewEvents.tabBarEvent))
     {
-        cordova.plugins.SplitView.selectTab(tabItem);
-        doSelected(tabItem,false);
-        //don't forward message; message is from destination views
-    }
-    else
-    {
-        tabItem -= 10
-        doSelected(tabItem,true);
         //forward item to keep other views in sync
+        doSelected(parseInt(data,10),true);
     }
 }
+
+
+
+
 
 function doSelected(item, forward)
 {

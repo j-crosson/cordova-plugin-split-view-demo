@@ -37,15 +37,6 @@ class TabBarController2: UITabBarController, UITabBarControllerDelegate {
         secondaryVC = viewControllerDetail
         if let jsonAg = properties {
             if compactProperties.decodeProperties(json: jsonAg) {
-                if let barItems = compactProperties.viewProps.tabBarItems {
-                    //only continue if there is an even number of entries (title, image pairs) - isMultiple
-                    if barItems.count % 2 == 0 {
-                        for item in stride(from: 0, to: barItems.count, by: 2) {
-                            let tabItem = TabBarProperties(title: barItems[item], image: barItems[item + 1], tag: item/2)
-                            tabBarsProperties.append(tabItem)
-                        }
-                    }
-                }
             }
         }
 
@@ -91,11 +82,8 @@ class TabBarController2: UITabBarController, UITabBarControllerDelegate {
         if let vcc = viewController as? UINavigationController {
             moveView(vcc)
             let tag = vcc.tabBarItem.tag
-            guard let append = compactProperties.viewProps.tabItemsAppend, append.count > 1 else {
-                return
-            }
-            let newitem = "'" + append[0] + String(tag) + append[1] + "'"
-            viewControllerCompact.commandDelegate.evalJs( "cordova.plugins.SplitView.onMessage(\(newitem));")
+            let newitem = String(tag)
+            viewControllerCompact.eventHandle(SpViewControllerCompact.ViewEvents.tabBarEvent, data: newitem)
         }
     }
 
@@ -103,12 +91,22 @@ class TabBarController2: UITabBarController, UITabBarControllerDelegate {
     super.viewDidLoad()
     self.delegate = self
     if #available(iOS 14.0, *) {
-        tabViewControllers = tabBarsProperties.map {
-            let viewController = UINavigationController()
-            viewController.isNavigationBarHidden = true
-            let  tabItem = UITabBarItem(title: $0.title, image: UIImage(systemName: $0.image), tag: $0.tag)
-            viewController.tabBarItem = tabItem
-            return viewController
+        let sysItem: [String: UITabBarItem.SystemItem] = ["bookmarks": .bookmarks, "contacts": .contacts, "downloads": .downloads, "favorites": .favorites, "featured": .featured, "history": .history, "more": .more, "mostRecent": .mostRecent, "mostViewed": .mostViewed, "recents": .recents, "search": .search, "topRated": .topRated]
+
+        if let barItems = compactProperties.viewProps.tabBarItems {
+            tabViewControllers = barItems.map {
+                let viewController = UINavigationController()
+                viewController.isNavigationBarHidden = true
+
+                if $0.systemItem != nil {
+                    if let systItem = sysItem[$0.systemItem ?? ""] {
+                        viewController.tabBarItem = UITabBarItem(tabBarSystemItem: systItem, tag: $0.tag ?? 0)
+                    }
+                } else {
+                    viewController.tabBarItem = UITabBarItem(title: $0.title, image: newImage(image: $0.image), tag: $0.tag ?? 0)
+                }
+                return viewController
+            }
         }
     }
 

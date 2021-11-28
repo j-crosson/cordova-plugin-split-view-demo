@@ -20,7 +20,7 @@ enum PluginDefaults {
 struct ViewProps {
     var viewProps =  ViewProperties()
     var lastError: String = "no error"
-    mutating func decodeProperties(json: String)->Bool {
+    mutating func decodeProperties(json: String) -> Bool {
         guard let jsonData = json.data(using: .utf8) else {
             lastError = "malformed"
             return false
@@ -45,6 +45,7 @@ struct ViewProps {
     }
 
     var backgroundColor: UIColor? {
+        //backgroundColor overrides light/dark 
         if let back = setColor(viewProps.backgroundColor) {
             return back
         }
@@ -60,6 +61,43 @@ struct ViewProps {
 }
 
 struct ViewProperties: Codable {
+
+    struct Configuration: Codable {
+        var type: String?
+        var value: String?
+    }
+
+    struct Image: Codable {
+        var type: String?
+        var name: String?
+        var symbolConfig: [Configuration]?
+    }
+
+    struct  MenuElement: Codable {
+        var title: String?
+        var identifier: String?
+        var menuImage: Image?
+        var attributes: [String]?
+    }
+
+    struct  BarButtonItem: Codable {
+        var type: String?
+        var title: String?
+        var image: Image?
+        var menuType: String?
+        var leftItemsSupplementBackButton: Bool?
+        var menuElements: [MenuElement]?
+        var menuTitle: String?
+        var identifier: String?
+    }
+
+    struct  TabBarItem: Codable {
+        var title: String?
+        var image: Image?
+        var systemItem: String?
+        var tag: Int?
+    }
+
     var primaryURL: String?
     var secondaryURL: String?
     var supplementaryURL: String?
@@ -67,6 +105,7 @@ struct ViewProperties: Codable {
     var primaryTitle: String?
     var secondaryTitle: String?
     var supplementaryTitle: String?
+
     var style: String?  // doubleColumn, tripleColumn
     var preferredSplitBehavior: String?
     var preferredDisplayMode: String?
@@ -86,12 +125,12 @@ struct ViewProperties: Codable {
     var backgroundColorLight: [CGFloat]?
     var backgroundColorDark: [CGFloat]?
 
+    var barButtonRight: BarButtonItem?
+    var barButtonLeft: BarButtonItem?
     var tintColor: [CGFloat]?
     var barTintColor: [CGFloat]?
-    
-    var tabBarItems: [String]?
-    var tabItemsAppend: [String]?
 
+    var tabBarItems: [TabBarItem]?
     var selectedTabIndex: Int?
 
     var topColumnForCollapsingToProposedTopColumn: String?
@@ -101,7 +140,6 @@ struct ViewProperties: Codable {
     var isEmbedded: Bool?
     var fullscreen: Bool?
     var makeRoot: Bool?
-
 }
 
 @objc public class SplitView: CDVPlugin {
@@ -387,9 +425,8 @@ precedencegroup ConditionalAssignmentPrecedence {
     assignment: true
     higherThan: AssignmentPrecedence
 }
- 
+
 infix operator =?: ConditionalAssignmentPrecedence
- 
 // Set value of left-hand side only if right-hand side differs from `nil`
 public func =? <T>(variable: inout T, value: T?) {
     if let val = value {

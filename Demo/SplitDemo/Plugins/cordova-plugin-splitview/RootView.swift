@@ -50,32 +50,34 @@ enum SplitViewAction {
         var primaryViewController: UINavigationController
 
         viewControllerMaster = SpViewController(backgroundColor: rootProperties.backgroundColor, page: rootProperties.viewProps.primaryURL ?? PluginDefaults.primaryURL, isEmbedded: isEmbedded)
-        if let propertiesString = viewProperties[1] {
-                viewControllerMaster?.setProperties(props: propertiesString)
-        }
         viewControllerDetail = SpViewControllerDetail(backgroundColor: rootProperties.backgroundColor, page: rootProperties.viewProps.secondaryURL ?? PluginDefaults.secondaryURL)
-        if let propertiesString = viewProperties[2] {
-                viewControllerDetail.setProperties(props: propertiesString)
-        }
 
         primaryViewController = (UINavigationController(rootViewController: viewControllerMaster!))
         secondaryViewController = UINavigationController(rootViewController: viewControllerDetail)
 
+        if let propertiesString = viewProperties[1] {
+                viewControllerMaster?.setProperties(props: propertiesString)
+        }
+
+        if let propertiesString = viewProperties[2] {
+                viewControllerDetail.setProperties(props: propertiesString)
+        }
+
         if !isDouble {
             viewControllerSupplementary = SpViewControllerSupplementary(backgroundColor: rootProperties.backgroundColor, page: rootProperties.viewProps.supplementaryURL ?? PluginDefaults.supplementaryURL)
 
-            if  let propertiesString = viewProperties[3] {
-                    viewControllerSupplementary?.setProperties(props: propertiesString)
-            }
-
+            //view-specific properties override root properties
             supplementaryViewController = UINavigationController(rootViewController: viewControllerSupplementary!)
             supplementaryViewController?.navigationBar.topItem?.title =? rootProperties.viewProps.supplementaryTitle
             supplementaryViewController?.navigationBar.tintColor = rootProperties.setColor(rootProperties.viewProps.tintColor)
             supplementaryViewController?.navigationBar.barTintColor = rootProperties.setColor(rootProperties.viewProps.barTintColor)
+            if  let propertiesString = viewProperties[3] {
+                    viewControllerSupplementary?.setProperties(props: propertiesString)
             }
+        }
 
             super.init(style: isDouble ? .doubleColumn : .tripleColumn)
-        
+
             setSplitViewProperties()
 
             let sendMessage: (String, String, SplitViewAction) -> Void = { [unowned self] in
@@ -110,7 +112,7 @@ enum SplitViewAction {
             viewControllerMaster?.webViewMessage = sendMessage
             viewControllerDetail.webViewMessage = sendMessage
             viewControllerSupplementary?.webViewMessage = sendMessage
-       
+
             primaryViewController.navigationBar.topItem?.title =? rootProperties.viewProps.primaryTitle
             secondaryViewController.navigationBar.topItem?.title =? rootProperties.viewProps.secondaryTitle
             primaryViewController.navigationBar.barTintColor = rootProperties.setColor(rootProperties.viewProps.barTintColor)
@@ -165,7 +167,6 @@ enum SplitViewAction {
             preferredPrimaryColumnWidth =? rootProperties.viewProps.preferredPrimaryColumnWidth
             minimumPrimaryColumnWidth =? rootProperties.viewProps.minimumPrimaryColumnWidth
             maximumPrimaryColumnWidth =? rootProperties.viewProps.maximumPrimaryColumnWidth
-            
 
             // =? operator will fail in this case when not triple column
             // preferredSupplementaryColumnWidthFraction =? rootProperties.viewProps.supplementaryColumnWidthFraction
@@ -182,7 +183,7 @@ enum SplitViewAction {
             if let minWid = rootProperties.viewProps.minimumSupplementaryColumnWidth {
                 minimumSupplementaryColumnWidth = minWid
             }
-        
+
             usesCompact =? rootProperties.viewProps.usesCompact
             presentsWithGesture =? rootProperties.viewProps.presentsWithGesture
             showsSecondaryOnlyButton =? rootProperties.viewProps.showsSecondaryOnlyButton
@@ -197,7 +198,7 @@ enum SplitViewAction {
         super.viewDidDisappear(animated)
         resultsClosure?(viewControllerDetail.detailResults, exitPath.rawValue)
     }
- 
+
     func splitViewController(_ svc: UISplitViewController,
                              topColumnForCollapsingToProposedTopColumn
         proposedTopColumn: UISplitViewController.Column) -> UISplitViewController.Column {
@@ -206,5 +207,5 @@ enum SplitViewAction {
     func splitViewController(_ svc: UISplitViewController,
                              displayModeForExpandingToProposedDisplayMode proposedDisplayMode: UISplitViewController.DisplayMode) -> UISplitViewController.DisplayMode {
         return dispModeForExpandingToProposedDispMode ?? proposedDisplayMode
-    }    
+    }
 }
