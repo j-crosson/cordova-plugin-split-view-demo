@@ -1,6 +1,5 @@
 //
 //  RootViewClassic.swift
-//  SplitDemo
 //
 //  Created by jerry on 5/16/21.
 //

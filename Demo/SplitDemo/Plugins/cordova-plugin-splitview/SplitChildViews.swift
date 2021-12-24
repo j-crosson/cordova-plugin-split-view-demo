@@ -1,6 +1,5 @@
 //
 //  SplitChildViews.swift
-//  SplitDemo
 //
 //  Created by jerry on 4/9/21.
 //

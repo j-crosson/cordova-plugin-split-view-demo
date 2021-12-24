@@ -1,6 +1,5 @@
 //
 //  LegacyTableView.swift
-//  SplitDemo
 //
 //  Created by jerry on 5/4/21.
 //

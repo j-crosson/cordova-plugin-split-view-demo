@@ -18,8 +18,8 @@
 		683015491FB84122B92C57F4 /* LegacyTableView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FFDEC11CA8054039A634A2A3 /* LegacyTableView.swift */; };
 		6AFF5BF91D6E424B00AB3073 /* CDVLaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 6AFF5BF81D6E424B00AB3073 /* CDVLaunchScreen.storyboard */; };
 		C2158D60982B46349223E3EF /* SplitChildViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5931C4E1B95F4F83B34ADFD4 /* SplitChildViews.swift */; };
+		C45C74AE2773886E0078CC75 /* Image.swift in Sources */ = {isa = PBXBuildFile; fileRef = C45C74AC2773886E0078CC75 /* Image.swift */; };
 		C46F5BB926CFF47100736239 /* tv.png in Resources */ = {isa = PBXBuildFile; fileRef = C46F5BB726CFF47100736239 /* tv.png */; };
-		C4DC4E1B2734DB8900D238A4 /* Image.swift in Sources */ = {isa = PBXBuildFile; fileRef = C4DC4E1A2734DB8900D238A4 /* Image.swift */; };
 		CFAEE3312B5A477485C6522B /* Embed.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8F8F69AA71E4B61981A8C67 /* Embed.swift */; };
 		D1DF185116D341A59EC01383 /* SplitView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BDFE7CEFE3414E63A3419276 /* SplitView.swift */; };
 		D43412DE384E4127A4D0297A /* RootView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 83B0C3DC61834C4791CDB045 /* RootView.swift */; };
@@ -73,8 +73,8 @@
 		83B0C3DC61834C4791CDB045 /* RootView.swift */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 4; includeInIndex = 0; lastKnownFileType = sourcecode.swift; name = RootView.swift; path = "cordova-plugin-splitview/RootView.swift"; sourceTree = "<group>"; };
 		8D1107310486CEB800E47090 /* SplitDemo-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = "SplitDemo-Info.plist"; path = "SplitDemo/SplitDemo-Info.plist"; plistStructureDefinitionIdentifier = "com.apple.xcode.plist.structure-definition.iphone.info-plist"; sourceTree = SOURCE_ROOT; };
 		BDFE7CEFE3414E63A3419276 /* SplitView.swift */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 4; includeInIndex = 0; lastKnownFileType = sourcecode.swift; name = SplitView.swift; path = "cordova-plugin-splitview/SplitView.swift"; sourceTree = "<group>"; };
+		C45C74AC2773886E0078CC75 /* Image.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Image.swift; path = "cordova-plugin-splitview/Image.swift"; sourceTree = "<group>"; };
 		C46F5BB726CFF47100736239 /* tv.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = tv.png; sourceTree = "<group>"; };
-		C4DC4E1A2734DB8900D238A4 /* Image.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Image.swift; sourceTree = "<group>"; };
 		EB87FDF31871DA8E0020F90C /* www */ = {isa = PBXFileReference; lastKnownFileType = folder; name = www; path = ../../www; sourceTree = "<group>"; };
 		EB87FDF41871DAF40020F90C /* config.xml */ = {isa = PBXFileReference; lastKnownFileType = text.xml; name = config.xml; path = ../../config.xml; sourceTree = "<group>"; };
 		ED33DF2A687741AEAF9F8254 /* Bridging-Header.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "Bridging-Header.h"; sourceTree = "<group>"; };
@@ -188,6 +188,7 @@
 			isa = PBXGroup;
 			children = (
 				BDFE7CEFE3414E63A3419276 /* SplitView.swift */,
+				C45C74AC2773886E0078CC75 /* Image.swift */,
 				F352B66D77B4418DA448FA96 /* TabBar.swift */,
 				83B0C3DC61834C4791CDB045 /* RootView.swift */,
 				355B6D7BB4544EE3BFB3078B /* RootViewClassic.swift */,
@@ -196,7 +197,6 @@
 				FFDEC11CA8054039A634A2A3 /* LegacyTableView.swift */,
 				397CAFBFECE34CA191AEBDC2 /* SView.h */,
 				7F4E46BF353D40CC9E90CB57 /* SplitBridge.h */,
-				C4DC4E1A2734DB8900D238A4 /* Image.swift */,
 			);
 			name = Plugins;
 			path = SplitDemo/Plugins;
@@ -324,7 +324,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				1D60589B0D05DD56006BFB54 /* main.m in Sources */,
-				C4DC4E1B2734DB8900D238A4 /* Image.swift in Sources */,
+				C45C74AE2773886E0078CC75 /* Image.swift in Sources */,
 				1D3623260D0F684500981E51 /* AppDelegate.m in Sources */,
 				302D95F114D2391D003F00A1 /* MainViewController.m in Sources */,
 				D1DF185116D341A59EC01383 /* SplitView.swift in Sources */,
@@ -359,7 +359,6 @@
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_ENABLE_OBJC_ARC = YES;
 				COPY_PHASE_STRIP = NO;
-				DEVELOPMENT_TEAM = 786TTY2R7D;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
@@ -369,7 +368,6 @@
 				INFOPLIST_FILE = "SplitDemo/SplitDemo-Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				LD_RUNPATH_SEARCH_PATHS = "@executable_path/Frameworks";
-				MARKETING_VERSION = 2.0.0;
 				PRODUCT_BUNDLE_IDENTIFIER = cedtris.SplitDemo;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_OBJC_BRIDGING_HEADER = "$(PROJECT_DIR)/$(PROJECT_NAME)/Bridging-Header.h";
@@ -390,7 +388,6 @@
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_ENABLE_OBJC_ARC = YES;
 				COPY_PHASE_STRIP = YES;
-				DEVELOPMENT_TEAM = 786TTY2R7D;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "SplitDemo/SplitDemo-Prefix.pch";
 				GCC_THUMB_SUPPORT = NO;
@@ -398,7 +395,6 @@
 				INFOPLIST_FILE = "SplitDemo/SplitDemo-Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				LD_RUNPATH_SEARCH_PATHS = "@executable_path/Frameworks";
-				MARKETING_VERSION = 2.0.0;
 				PRODUCT_BUNDLE_IDENTIFIER = cedtris.SplitDemo;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_OBJC_BRIDGING_HEADER = "$(PROJECT_DIR)/$(PROJECT_NAME)/Bridging-Header.h";

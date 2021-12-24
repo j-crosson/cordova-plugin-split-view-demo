@@ -7,6 +7,6 @@ document.addEventListener('touchmove', function(e) {
 function onDeviceReady() {
     navigator.splashscreen.hide();
     // For classic "root" demo, use one of the following lines:
-    //doViewWeb();
-    //doViewTable();
+    //doClassicViewWeb();
+    //doClassicViewTable();
 }

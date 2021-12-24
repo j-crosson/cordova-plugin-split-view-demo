@@ -7,7 +7,6 @@ var PLUGIN_NAME = 'SplitView';
 var SplitView = function() {};
 
 
-
 //
 // create and show split view
 //
@@ -72,21 +71,20 @@ SplitView.prototype.onMessage = function(item) {
         this.message(item);
 };
 
-    
+
 //
 // view event handler
 //
 SplitView.prototype.onAction = function(event,data){
         this.action(event,data);
 };
-    
- 
+
+
 SplitView.prototype.viewEvents ={
     buttonEvent:    "0",
     tabBarEvent:    "1",
-    };
-    
-    
+};
+
 
 // The following is Classic View Only
 
@@ -173,6 +171,4 @@ SplitView.prototype.dismissType ={
 };
 
 module.exports = new SplitView();
-
-
 });

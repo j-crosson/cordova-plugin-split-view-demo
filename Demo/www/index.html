@@ -14,9 +14,9 @@
                 </button>
                 <button type="button" class="itemButton" ontouchstart="this.className='pushedButton';" ontouchend="this.className='itemButton';" onclick="doViewWeb(1);">Two Column
                 </button>
-                <button type="button" class="itemButton" ontouchstart="this.className='pushedButton';" ontouchend="this.className='itemButton';" onclick="doViewWeb(0);">Classic Web
+                <button type="button" class="itemButton" ontouchstart="this.className='pushedButton';" ontouchend="this.className='itemButton';" onclick="doClassicViewWeb();">Classic Web
                 </button>
-                <button type="button" class="itemButton" ontouchstart="this.className='pushedButton';" ontouchend="this.className='itemButton';" onclick="doViewTable();">Classic Table
+                <button type="button" class="itemButton" ontouchstart="this.className='pushedButton';" ontouchend="this.className='itemButton';" onclick="doClassicViewTable();">Classic Table
                 </button>
             </div >
             <div style = "text-align: center; margin-top: 10px;">
@@ -25,164 +25,9 @@
         </div>
         <script type="text/javascript" src="cordova.js"></script>
         <script type="text/javascript" src="js/index.js"></script>
-        <script type="text/javascript">
-            
-            const tableItems = [
-              {
-                itemText: "One",
-                itemImage: "tv.png"
-              },
-              {
-                itemText: "Two",
-                itemImage: "tv.png"
-              },
-              {
-                itemText: "Three",
-                itemImage: "tv.png"
-              },
-              {
-                itemText: "Four",
-                itemImage: "tv.png"
-              },
-              {
-                itemText: "Five",
-                itemImage: "tv.png"
-              }
-            ];
+        <script type="text/javascript" src="js/classicView.js"></script>
+        <script type="text/javascript" src="js/newView.js"></script>
 
-            function splitViewClosed( results,status)
-            {
-                if(status == cordova.plugins.SplitView.dismissType.left)
-                    document.getElementById("result").textContent="Cancelled";
-                else
-                    document.getElementById("result").textContent=results;
-            }
-            
-         // var isDarkMode = window.matchMedia('(prefers-color-scheme:dark)');
-        function doViewWeb(option)
-         {
-            cordova.plugins.SplitView.initSplitView();
-            
-            if(option == 0)  //classic view
-            {
-                if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches)
-                {
-                    // is dark
-                    cordova.plugins.SplitView.setPrimaryBackgroundColor(30,30,30);
-                    cordova.plugins.SplitView.setSecondaryBackgroundColor(30,30,30);
-                }
-                else
-                {
-                    // not dark
-                    cordova.plugins.SplitView.setPrimaryBackgroundColor(228,228,228);
-                    cordova.plugins.SplitView.setSecondaryBackgroundColor(228,228,228);
-                }
-                cordova.plugins.SplitView.preferredPrimaryColumnWidthFraction = 0.5;
-                cordova.plugins.SplitView.primaryTitle = "Primary";
-                cordova.plugins.SplitView.secondaryTitle = "Secondary";
-                cordova.plugins.SplitView.leftButtonTitle = "Cancel";
-                cordova.plugins.SplitView.rightButtonTitle = "Done";
-                cordova.plugins.SplitView.closed = splitViewClosed;
-           
-                // Classic split view tests
-                //
-                //test color set
-                //cordova.plugins.SplitView.setBarTintColor(255,0,0);
-                //cordova.plugins.SplitView.setTintColor(0,255,0);
-
-                //test fullscreen
-                //cordova.plugins.SplitView.fullscreen = true;
-            
-                //test maximumPrimaryColumnWidth
-                //cordova.plugins.SplitView.maximumPrimaryColumnWidth = 100.0
-            
-                //test minimumPrimaryColumnWidth
-                //cordova.plugins.SplitView.minimumPrimaryColumnWidth = 100.0
-                
-                cordova.plugins.SplitView.show(null,null,true,null,null);
-            }
-            else //new view
-            {
-                let redBackground = 228;
-                let greenBackground = 228;
-                let blueBackground = 228;
-                if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches)
-                {
-                    // is dark
-                    redBackground = 30;
-                    greenBackground = 30;
-                    blueBackground = 30;
-                }
-                
-                let viewPropJSON;
-                let viewPropCompact;
-                let viewPropPrimary;
-                let viewPropSecondary;
-
-                
-                switch (option)
-                {
-                    case 0:
-                        viewPropJSON = '{"primaryTitle":"Primary", "secondaryTitle":"Secondary","fullscreen":true, "Style":"doubleColumn","backgroundColor":[' + redBackground+','+ greenBackground+ ',' + blueBackground+ ',' + '1]}';
-                        break;
-                    case 1:
-                        viewPropJSON = '{"primaryTitle":"Primary","primaryURL":"doublePrimary.html","secondaryTitle":"Secondary","secondaryURL":"doubleSecondary.html", "style":"doubleColumn","topColumnForCollapsingToProposedTopColumn":"primary", "preferredSplitBehavior":"automatic","preferredDisplayMode":"twoBesideSecondary","primaryEdge":"leading","backgroundColor":[' + redBackground+','+ greenBackground+ ',' + blueBackground+ ',' + '1]}';
-                        viewPropPrimary ='{ "barButtonRight": {"type":"text","title":"Tap Me","identifier": "rightTap"} }';
-                        //Demo left button
-                        //viewPropPrimary ='{ "barButtonRight": {"type":"text","title":"Tap Me","identifier": "rightTap"},"barButtonLeft": {"type":"text","title":"Left"} }';
-
-                        viewPropSecondary='{ "barButtonRight": {"type": "image", "menuType": "menu", "identifier": ".0", "image": {"type": "symbol","name": "dice"},"menuTitle": "Menu", "menuElements": [{"title":"Item 1","identifier": ".1","menuImage": {"type": "symbol","name": "dice","symbolConfig":[{"type":"scale","value":"large"}]}},{"title":"Item 2","identifier": ".2","menuImage": {"type": "symbol","name": "dice","symbolConfig":[{"type":"weight","value":"bold"}]}},{"title":"Item 3","identifier": ".3","menuImage": {"type": "symbol","name": "dice","symbolConfig":[{"type":"scale","value":"large"},{"type":"weight","value":"bold"}]}},{"title":"Item 4","identifier": ".4","menuImage": {"type": "symbol","name": "dice"}} ,{"title":"destructive","identifier": ".5","menuImage": {"type": "symbol","name": "flame.fill"}, "attributes": ["destructive"]} ]}}';
-                        viewPropCompact = null;
-                        break;
-                    case 2:
-                        viewPropJSON = '{"primaryTitle":"Primary",    "primaryURL":"triplePrimary.html","topColumnForCollapsingToProposedTopColumn":"primary","showsSecondaryOnlyButton":true,"preferredDisplayMode":"twoBesideSecondary","secondaryTitle":"Secondary","secondaryURL":"tripleSecondary.html","style":"tripleColumn","supplementaryTitle":"Supplementary","supplementaryURL":"tripleSupplementary.html","tintColor":[1,255,3,1],"backgroundColor":[' + redBackground+','+ greenBackground+ ',' + blueBackground+ ',' + '1]}';
-                        viewPropPrimary = null;
-                        viewPropSecondary = null;
-                        viewPropCompact = null;
-                        break;
-                    case 3:
-                        viewPropJSON = '{"primaryURL":"tab1.html","primaryTitle":"Primary","secondaryURL":"tab2.html", "secondaryTitle":"Secondary","compactURL":"compact.html", "style":"doubleColumn", "preferredSplitBehavior":"automatic","preferredDisplayMode":"twoBesideSecondary","usesCompact":true, "backgroundColor":[' + redBackground+','+ greenBackground+ ',' + blueBackground+ ',' + '1]}';
-                       
-                      //  Demo of tabBar System Items
-                      //  viewPropCompact = '{"tabBarItems":[{"title":"title1", "tag": 0, "systemItem": "bookmarks"},{"title":"title2", "tag": 1, "systemItem": "contacts"},{"title":"title3", "tag": 2, "systemItem": "downloads"}],"backgroundColor":[' + redBackground+','+ greenBackground+ ',' + blueBackground+ ',' + '1]}';
-
-                        viewPropCompact = '{"tabBarItems":[{"title":"title1", "tag": 0, "image": {"type": "symbol","name": "1.circle"}},{"title":"title2", "tag": 1, "image": {"type": "symbol","name": "2.circle"}},{"title":"title3", "tag": 2, "image": {"type": "symbol","name": "3.circle"}}],"backgroundColor":[' + redBackground+','+ greenBackground+ ',' + blueBackground+ ',' + '1]}';
-                        viewPropPrimary = null;
-                        viewPropSecondary = null;
-                        break;
-                }
-    
-           cordova.plugins.SplitView.showView(viewPropJSON,viewPropPrimary,viewPropSecondary,null,viewPropCompact,null,null);
-            }
-         }
-        
-        function doViewTable()
-        {
-            cordova.plugins.SplitView.initSplitView();
-            cordova.plugins.SplitView.preferredPrimaryColumnWidthFraction = 0.5;
-            cordova.plugins.SplitView.displayModeButtonItem = false;
-            cordova.plugins.SplitView.primaryTitle = "Primary";
-            cordova.plugins.SplitView.secondaryTitle = "Secondary";
-            cordova.plugins.SplitView.rightButtonTitle = "Done";
-            cordova.plugins.SplitView.useTableView = true;
-            cordova.plugins.SplitView.closed = splitViewClosed;
-            for(const item of tableItems)
-            {
-                cordova.plugins.SplitView.addTableItem(item.itemText,item.itemImage);
-            }
-            if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches)
-            {
-                // is dark
-                cordova.plugins.SplitView.setSecondaryBackgroundColor(30,30,30);
-            }
-            else
-            {
-                // not dark
-                cordova.plugins.SplitView.setSecondaryBackgroundColor(228,228,228);
-            }
-            cordova.plugins.SplitView.show(null,null,true,null,null);
-        }
-        </script>
     </body>
 </html>
 
