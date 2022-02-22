@@ -20,7 +20,6 @@ function recievedMessage(item)
         itemSelected = true;
     }
 
-    
     switch(item)
     {
         case '0':

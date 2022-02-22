@@ -25,3 +25,9 @@ function recievedMessage(item)
 {
     selectItem(item);
 }
+
+function goAway()
+{
+    cordova.plugins.SplitView.viewAction("dismiss",null,null);
+}
+

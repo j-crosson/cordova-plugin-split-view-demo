@@ -30,7 +30,7 @@ function recievedMessage(item)
     selectItem(item);
 }
 function handleEvents(event,data)
-{//console.log(data);
+{
     if((event === cordova.plugins.SplitView.viewEvents.buttonEvent) && (data === "rightTap"))
     {
         if (testButtonIndex++ == theSize)
@@ -38,4 +38,9 @@ function handleEvents(event,data)
         let viewProps ='{ "barButtonRight": {"type":"system","identifier": "rightTap","title":"'+testButtonOptions[testButtonIndex]+'"} }';
         cordova.plugins.SplitView.setProperties(viewProps,null,null);//console.log(viewProps)
     }
+}
+
+function goAway()
+{
+    cordova.plugins.SplitView.viewAction("dismiss",null,null);
 }

@@ -8,12 +8,16 @@ import Foundation
 import UIKit
 import WebKit
 
-class SpViewControllerChild: CDVViewController {
+class SpViewControllerChild: CDVViewController, UIScrollViewDelegate {
     var initialBackgroundColor: UIColor?
     var isReady = false //set when webview wants messages
     var queuedMessage = "" //last message sent before device ready/ init
     var webViewMessage: ((String, String, SplitViewAction) -> Void)?
     var childProperties = ViewProps()
+    var navBarPrefersLargeTitles = false
+    var horizScrollBarInvisible = false
+    var vertScrollBarInvisible = false
+    var preventHorizScroll = false
 
     enum ViewEvents: String {
         case buttonEvent = "0"
@@ -32,13 +36,84 @@ class SpViewControllerChild: CDVViewController {
        fatalError("init(coder:) has not been implemented")
     }
 
+    func initNavBar() {
+        if navBarPrefersLargeTitles {
+            navigationController?.navigationBar.prefersLargeTitles = true
+            navigationItem.largeTitleDisplayMode = .always
+        } else {
+            navigationController?.navigationBar.prefersLargeTitles = false
+            navigationItem.largeTitleDisplayMode = .never
+        }
+    }
+
    override func viewDidLoad() {
-        launchView = UIView(frame: view.bounds)
-        launchView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
-        super.viewDidLoad()
-        view.backgroundColor = initialBackgroundColor
-        launchView.backgroundColor = initialBackgroundColor
-        view.addSubview(launchView)
+       initNavBar()
+       launchView = UIView(frame: view.bounds)
+       launchView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
+       super.viewDidLoad()
+       view.backgroundColor = initialBackgroundColor
+       launchView.backgroundColor = initialBackgroundColor
+       view.addSubview(launchView)
+
+       let wkWebView = webViewEngine?.engineWebView as? WKWebView
+       if let scrollVw = wkWebView?.scrollView {
+           scrollVw.contentInsetAdjustmentBehavior =  UIScrollView.ContentInsetAdjustmentBehavior.never
+
+           // fixes scrolledge,large titles, etc.
+           scrollVw.delegate = self
+           scrollVw.showsHorizontalScrollIndicator = !horizScrollBarInvisible
+           scrollVw.showsVerticalScrollIndicator = !vertScrollBarInvisible
+           if preventHorizScroll {
+               scrollVw.isDirectionalLockEnabled = true //seems to slightly improve things
+           }
+       }
+    }
+
+    //needed for correct scrolledge on rotation
+    //there are non-rotating cases where we don't want the sizing to happen
+    //but handling those cases is for a future version
+    //or if we're lucky the need for this workaround will go away
+    override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
+        super.viewWillTransition(to: size, with: coordinator)
+        let navCtl = self.navigationController
+           coordinator.animate(alongsideTransition: { _ in
+               navCtl?.navigationBar.sizeToFit()
+           }, completion: nil)
+       }
+
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        let navCtl = self.navigationController
+        navCtl?.navigationBar.sizeToFit()
+    }
+
+    //
+    //workaround for large-title navBars
+    //
+
+    func scrollViewDidScroll(_ scrollView: UIScrollView) {
+        if preventHorizScroll {
+           if scrollView.contentOffset.x != 0 {
+               scrollView.contentOffset.x = 0
+           }
+        }
+        let bottomEdge = scrollView.contentOffset.y + scrollView.frame.size.height
+        let yOff = scrollView.contentOffset.y
+        if yOff <= 0 {
+            // The following two lines handle an edge condition or two, mainly Status Bar scroll-to-top
+            // which would end up with a bad offset (very noticible extra top space)
+            // Since we handle DidScroll, we aren't handling
+            //
+            //     func scrollViewDidEndDragging(_ scrollView: UIScrollView,willDecelerate decelerate: Bool) {
+            //     if !decelerate {
+            //
+            //     func scrollViewDidEndDecelerating(_ scrollView: UIScrollView) {
+            if !( scrollView.isDragging || scrollView.isDecelerating) {
+           scrollView.setContentOffset(scrollView.contentOffset, animated: false)
+            }
+            let navC = self.navigationController
+            navC?.navigationBar.sizeToFit()
+        }
     }
 
     //
@@ -70,7 +145,9 @@ class SpViewControllerChild: CDVViewController {
         guard let navController = navigationController else {
             return
         }
+
         if childProperties.decodeProperties(json: props) {
+            setScrollProperties(horizBarInvisible: childProperties.viewProps.horizScrollBarInvisible ?? false, vertBarInvisible: childProperties.viewProps.vertScrollBarInvisible ?? false, noHorizScroll: childProperties.viewProps.preventHorizScroll ?? false)
             navigationController?.navigationBar.tintColor =? childProperties.setColor(childProperties.viewProps.tintColor)
             navigationController?.navigationBar.barTintColor =? childProperties.setColor(childProperties.viewProps.barTintColor)
             if let rightButton = childProperties.viewProps.barButtonRight {
@@ -79,7 +156,39 @@ class SpViewControllerChild: CDVViewController {
             if let leftButton = childProperties.viewProps.barButtonLeft {
                 setButton(navController, buttonItem: leftButton, isRight: false, leftItemsSuppBack: childProperties.viewProps.barButtonLeft?.leftItemsSupplementBackButton ?? false)
             }
+            setNavBarAppearance(navController, appearance: childProperties.viewProps.navBarAppearance)
         }
+    }
+
+    func setNavBarAppearance(_ navController: UINavigationController, appearance: ViewProperties.NavBarAppearance?) {
+        navBarPrefersLargeTitles =? appearance?.prefersLargeTitles
+        if #available(iOS 14.0, *) {
+            if appearance?.background == "transparent" {
+                let appearance = UINavigationBarAppearance()
+                appearance.configureWithTransparentBackground()
+                navController.navigationBar.scrollEdgeAppearance = appearance
+                navController.navigationBar.standardAppearance = appearance
+            }
+            if appearance?.background == "opaque" {
+                let appearance = UINavigationBarAppearance()
+                appearance.configureWithOpaqueBackground()
+                navController.navigationBar.scrollEdgeAppearance = appearance
+                navController.navigationBar.standardAppearance = appearance
+            }
+            if appearance?.background == "default" {
+                let appearance = UINavigationBarAppearance()
+                appearance.configureWithDefaultBackground()
+                navController.navigationBar.scrollEdgeAppearance = appearance
+                navController.navigationBar.standardAppearance = appearance
+            }
+        }
+    }
+
+    func setScrollProperties( horizBarInvisible: Bool, vertBarInvisible: Bool, noHorizScroll: Bool) {
+        // can modify to set properties dynamically but now we only set on creation
+        horizScrollBarInvisible = horizBarInvisible
+        vertScrollBarInvisible = vertBarInvisible
+        preventHorizScroll = noHorizScroll
     }
 
     func setButton(_ navController: UINavigationController, buttonItem: ViewProperties.BarButtonItem, isRight: Bool, leftItemsSuppBack: Bool) {

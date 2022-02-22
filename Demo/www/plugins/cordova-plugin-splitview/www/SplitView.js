@@ -64,6 +64,14 @@ SplitView.prototype.selectTab = function ( tab, success, error) {
 };
 
 //
+// viewAction
+//
+        
+SplitView.prototype.viewAction = function ( action, success, error) {
+    exec(success, error, 'SplitView', 'viewAction', [action]);
+};
+    
+//
 // recieve string from sendMessage
 //
 

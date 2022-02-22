@@ -30,10 +30,37 @@ body {
     font-family: system-ui, -apple-system, -apple-system-font, 'Segoe UI', 'Roboto', sans-serif;
     height:100vh;
     width:100vw;
+    overflow: hidden;
     margin:0px;
-    padding:0px;
+    padding: env(safe-area-inset-top, 0px) env(safe-area-inset-right, 0px) env(safe-area-inset-bottom, 0px)  0px;
     /* Padding to avoid the "unsafe" areas behind notches in the screen */
-    text-transform:uppercase;
+}
+
+.bodyfixed {
+    -webkit-touch-callout: none;                /* prevent callout to copy image, etc when tap to hold */
+    -webkit-text-size-adjust: none;             /* prevent webkit from resizing text to fit */
+    -webkit-user-select: none;                  /* prevent copy paste, to allow, change 'none' to 'text' */
+    background: var(--listcolor-scheme-background);
+    font-family: system-ui, -apple-system, -apple-system-font, 'Segoe UI', 'Roboto', sans-serif;
+    height:100vh;
+    width:100vw;
+    overflow: hidden;
+    margin:0px;
+    padding: env(safe-area-inset-top, 0px) env(safe-area-inset-right, 0px) env(safe-area-inset-bottom, 0px) env(safe-area-inset-left, 0px);
+    /* Padding to avoid the "unsafe" areas behind notches in the screen */
+}
+
+.bodyscroll {
+    -webkit-touch-callout: none;
+    -webkit-text-size-adjust: none;
+    -webkit-user-select: none;
+    background: var(--listcolor-scheme-background);
+    font-family: system-ui, -apple-system, -apple-system-font, 'Segoe UI', 'Roboto', sans-serif;
+    height:100vh;
+    width:100vw;
+    overflow: scroll;
+    padding: env(safe-area-inset-top, 0px) env(safe-area-inset-right, 0px) env(safe-area-inset-bottom, 0px) env(safe-area-inset-left, 0px);
+    margin:0px;
 }
 
 .block {
@@ -106,16 +133,16 @@ body {
 }
 
 .pushedButton {
-display: block;
-width: 100%;
-background: var(--color-scheme-backgroundPushed);
-color: var(--color-scheme-text-color);
-text-align: center;
-border:none;
-font-weight:bold;
-font: -apple-system-headline;
-padding: 11px 28px;
-margin-top: 10px;
+    display: block;
+    width: 100%;
+    background: var(--color-scheme-backgroundPushed);
+    color: var(--color-scheme-text-color);
+    text-align: center;
+    border:none;
+    font-weight:bold;
+    font: -apple-system-headline;
+    padding: 11px 28px;
+    margin-top: 10px;
 }
 
 .pushedButtonChild {
@@ -131,15 +158,15 @@ margin-top: 10px;
 }
 
 .topButton {
-display: block;
-width: 100%;
-background-color:#ffffff;
-text-align: center;
-border:1px solid #f1f1f1;
-font-weight:bold;
-font: -apple-system-headline;
-padding: 11px 28px;
-margin-top: 10px;
+    display: block;
+    width: 100%;
+    background-color:#ffffff;
+    text-align: center;
+    border:1px solid #f1f1f1;
+    font-weight:bold;
+    font: -apple-system-headline;
+    padding: 11px 28px;
+    margin-top: 10px;
 }
 
 .center {
@@ -152,3 +179,26 @@ margin-top: 10px;
 .centertxt {
     font-size:50px;
 }
+
+
+.footer {
+  position: fixed;
+  left: 0;
+  bottom: env(safe-area-inset-bottom, 0px);
+  width: 100%;
+  background-color: grey;
+  color: white;
+  text-align: center;
+}
+
+.footerlong {
+    position: fixed;
+    left: 0;
+    bottom: 0;
+    width: 100%;
+    background-color: red;
+    color: white;
+    text-align: center;
+  }
+
+

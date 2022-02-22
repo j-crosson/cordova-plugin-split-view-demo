@@ -3,6 +3,7 @@
 // Two column split view
 //
 {
+  "fullscreen":true,
   "primaryTitle": "Primary",
   "primaryURL": "doublePrimary.html",
   "secondaryTitle": "Secondary",
@@ -29,7 +30,10 @@
     "type": "text",
     "title": "Tap Me",
     "identifier": "rightTap"
-  }
+  },
+ "navBarAppearance":{
+    "prefersLargeTitles":true
+ }
 }
 
 //
@@ -122,6 +126,7 @@
 //
 
 {
+  "fullscreen":true,
   "primaryTitle": "Primary",
   "primaryURL": "triplePrimary.html",
   "topColumnForCollapsingToProposedTopColumn": "primary",
@@ -147,7 +152,7 @@
 }
 
 //
-// Compact view split view
+// Compact TabView split view
 //
 
 {
@@ -172,16 +177,28 @@
 // Compact view compact
 //
 
-
+  "tabBar":{
+    "tabBarAppearance":{
+       "background":"transparent",
+       "lockBackground":true
+    }
+  },
   "tabBarItems": [
-    {
-      "title": "title1",
-      "tag": 0,
-      "image": {
-        "type": "symbol",
-        "name": "1.circle"
-      }
-    },
+   {
+     "title":"title1",
+     "tag":0,
+     "hideNavBar":false,
+     "navBar":{
+        "title":"Item1",
+        "appearance":{
+           "prefersLargeTitles":true
+        }
+     },
+     "image":{
+        "type":"symbol",
+        "name":"1.circle"
+     }
+   },
     {
       "title": "title2",
       "tag": 1,
@@ -190,15 +207,22 @@
         "name": "2.circle"
       }
     },
-    {
-      "title": "title3",
-      "tag": 2,
-      "image": {
-        "type": "symbol",
-        "name": "3.circle"
+  {
+      "title":"title3",
+      "tag":2,
+      "hideNavBar":false,
+      "navBar":{
+         "title":"Item3",
+         "appearance":{
+            "prefersLargeTitles":true
+         }
+      },
+      "image":{
+         "type":"symbol",
+         "name":"3.circle"
       }
-    }
-  ],
+   }
+ ],
   "backgroundColor": [
     228,
     228,

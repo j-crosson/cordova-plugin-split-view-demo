@@ -31,3 +31,8 @@ function recievedMessage(item)
 {
     selectItemMsg(item, false);
 }
+
+function goAway()
+{
+    cordova.plugins.SplitView.viewAction("dismiss",null,null);
+}

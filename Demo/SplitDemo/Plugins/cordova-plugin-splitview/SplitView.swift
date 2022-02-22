@@ -58,9 +58,54 @@ struct ViewProps {
         }
         return nil
     }
+    
+    func setNavBarAppearance(_ navController: UINavigationController, appearance: ViewProperties.NavBarAppearance?) -> Bool {
+        var navBarPrefersLargeTitles = false
+        navBarPrefersLargeTitles =? appearance?.prefersLargeTitles
+        if #available(iOS 14.0, *) {
+            if appearance?.background == "transparent" {
+                let appearance = UINavigationBarAppearance()
+                appearance.configureWithTransparentBackground()
+                navController.navigationBar.scrollEdgeAppearance = appearance
+                navController.navigationBar.standardAppearance = appearance
+            }
+            if appearance?.background == "opaque" {
+                let appearance = UINavigationBarAppearance()
+                appearance.configureWithOpaqueBackground()
+                navController.navigationBar.scrollEdgeAppearance = appearance
+                navController.navigationBar.standardAppearance = appearance
+            }
+            if appearance?.background == "oldDefault" {
+                let appearance = UINavigationBarAppearance()
+                appearance.configureWithDefaultBackground()
+                navController.navigationBar.scrollEdgeAppearance = appearance
+                navController.navigationBar.standardAppearance = appearance
+            }
+        }
+        return navBarPrefersLargeTitles
+    }
 }
 
 struct ViewProperties: Codable {
+
+    struct TabBar: Codable {
+        var tabBarAppearance: TabBarAppearance?
+    }
+
+    struct NavBar: Codable {
+        var appearance: NavBarAppearance?
+        var title: String?
+    }
+
+    struct NavBarAppearance: Codable {
+        var prefersLargeTitles: Bool?
+        var background: String?
+    }
+
+    struct TabBarAppearance: Codable {
+        var background: String?
+        var lockBackground: Bool?
+    }
 
     struct Configuration: Codable {
         var type: String?
@@ -92,6 +137,8 @@ struct ViewProperties: Codable {
     }
 
     struct  TabBarItem: Codable {
+        var hideNavBar: Bool?
+        var navBar: NavBar?
         var title: String?
         var image: Image?
         var systemItem: String?
@@ -127,10 +174,13 @@ struct ViewProperties: Codable {
 
     var barButtonRight: BarButtonItem?
     var barButtonLeft: BarButtonItem?
-    var tintColor: [CGFloat]?
-    var barTintColor: [CGFloat]?
+
+    var navBarAppearance: NavBarAppearance?
+    var tintColor: [CGFloat]?  //will move into NavBarAppearance
+    var barTintColor: [CGFloat]? //will move into NavBarAppearance
 
     var tabBarItems: [TabBarItem]?
+    var tabBar: TabBar?
     var selectedTabIndex: Int?
 
     var topColumnForCollapsingToProposedTopColumn: String?
@@ -140,6 +190,9 @@ struct ViewProperties: Codable {
     var isEmbedded: Bool?
     var fullscreen: Bool?
     var makeRoot: Bool?
+    var horizScrollBarInvisible: Bool?
+    var vertScrollBarInvisible: Bool?
+    var preventHorizScroll: Bool?
 }
 
 @objc public class SplitView: CDVPlugin {
@@ -182,6 +235,18 @@ struct ViewProperties: Codable {
         }
         if let childController = viewController as? SpViewControllerChild {
             childController.doAction(.setProperties, props, "")
+        }
+    }
+
+    @objc(viewAction:)
+    func action(command: CDVInvokedUrlCommand) {
+        guard let gAction  = command.arguments[0] as? String else {
+            return
+        }
+        if gAction == "dismiss" {
+            if let childController = viewController as? SpViewControllerChild {
+                childController.doAction(.dismiss, "", "")
+            }
         }
     }
 

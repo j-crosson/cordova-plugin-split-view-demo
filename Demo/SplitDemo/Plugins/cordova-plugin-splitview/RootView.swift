@@ -7,7 +7,7 @@
 import Foundation
 
 enum SplitViewAction {
-    case sendmessage, show, hide, setProperties
+    case sendmessage, show, hide, setProperties, dismiss
 }
 @available(iOS 14.0, *)
 @objc class RtViewController: UISplitViewController, UISplitViewControllerDelegate {
@@ -105,6 +105,8 @@ enum SplitViewAction {
                     } else if $2 == SplitViewAction.setProperties {
                         rootProperties.decodeProperties(json: $0)
                         setSplitViewProperties()
+                    } else if $2 == SplitViewAction.dismiss {
+                        dismiss(animated: true, completion: nil)
                     }
             }
 

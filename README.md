@@ -12,6 +12,14 @@ The demo shows both new and classic view options in a modal view, supporting bot
 There is now an option to make the split view a root view but this does not apply to the classic split view.
 To run the demo that simulates a root split view in classic split view, rename “indexRoot.html” to “index.html”. In "index.js", un-comment one of the lines indicated in the “root demo” comment.
 
+## New in 2.2
+* Large Navigation Bar Titles in Primary View
+* Navigation Bar for Tab View
+* Tab Bar Appearance options
+* Scrollbar  options
+* iOS 15 Appearance updates
+
+
 ## New in 2.1
 * Navigation Bar buttons and context menus. 
 * Additional Tab-Bar options, updated interface
