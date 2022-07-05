@@ -17,182 +17,16 @@ enum PluginDefaults {
     static let secondaryURLclassic: String = "index2.html"
 }
 
-struct ViewProps {
-    var viewProps =  ViewProperties()
-    var lastError: String = "no error"
-    mutating func decodeProperties(json: String) -> Bool {
-        guard let jsonData = json.data(using: .utf8) else {
-            lastError = "malformed"
-            return false
-        }
-        do {
-            viewProps = try JSONDecoder().decode(ViewProperties.self, from: jsonData)
-            return true
-        } catch {
-            lastError = "decode failed"
-            return false
-       }
-    }
-
-    func setColor(_ color: [CGFloat?]?) -> UIColor? {
-        guard color?.count == 4 else {
-         return nil
-        }
-        guard let rrr = color?[0], let ggg=color?[1], let bbb=color?[2], let aaa=color?[3] else {
-               return nil
-           }
-        return UIColor(red: rrr/255, green: ggg/255, blue: bbb/255, alpha: aaa)
-    }
-
-    var backgroundColor: UIColor? {
-        //backgroundColor overrides light/dark 
-        if let back = setColor(viewProps.backgroundColor) {
-            return back
-        }
-        if #available(iOS 13.0, *) {
-            if UITraitCollection.current.userInterfaceStyle == .dark {
-                return setColor(viewProps.backgroundColorDark)
-            } else {
-                return setColor(viewProps.backgroundColorLight)
-            }
-        }
-        return nil
-    }
-    
-    func setNavBarAppearance(_ navController: UINavigationController, appearance: ViewProperties.NavBarAppearance?) -> Bool {
-        var navBarPrefersLargeTitles = false
-        navBarPrefersLargeTitles =? appearance?.prefersLargeTitles
-        if #available(iOS 14.0, *) {
-            if appearance?.background == "transparent" {
-                let appearance = UINavigationBarAppearance()
-                appearance.configureWithTransparentBackground()
-                navController.navigationBar.scrollEdgeAppearance = appearance
-                navController.navigationBar.standardAppearance = appearance
-            }
-            if appearance?.background == "opaque" {
-                let appearance = UINavigationBarAppearance()
-                appearance.configureWithOpaqueBackground()
-                navController.navigationBar.scrollEdgeAppearance = appearance
-                navController.navigationBar.standardAppearance = appearance
-            }
-            if appearance?.background == "oldDefault" {
-                let appearance = UINavigationBarAppearance()
-                appearance.configureWithDefaultBackground()
-                navController.navigationBar.scrollEdgeAppearance = appearance
-                navController.navigationBar.standardAppearance = appearance
-            }
-        }
-        return navBarPrefersLargeTitles
-    }
+enum ViewEvents: String {
+    case buttonEvent = "0"
+    case tabBarEvent = "1"
+    case collectionEvent = "2"
+    //previous versions had separate right and left tap events as well as a menu-item-selected event
+    //now each action has a unique ID
 }
 
-struct ViewProperties: Codable {
-
-    struct TabBar: Codable {
-        var tabBarAppearance: TabBarAppearance?
-    }
-
-    struct NavBar: Codable {
-        var appearance: NavBarAppearance?
-        var title: String?
-    }
-
-    struct NavBarAppearance: Codable {
-        var prefersLargeTitles: Bool?
-        var background: String?
-    }
-
-    struct TabBarAppearance: Codable {
-        var background: String?
-        var lockBackground: Bool?
-    }
-
-    struct Configuration: Codable {
-        var type: String?
-        var value: String?
-    }
-
-    struct Image: Codable {
-        var type: String?
-        var name: String?
-        var symbolConfig: [Configuration]?
-    }
-
-    struct  MenuElement: Codable {
-        var title: String?
-        var identifier: String?
-        var menuImage: Image?
-        var attributes: [String]?
-    }
-
-    struct  BarButtonItem: Codable {
-        var type: String?
-        var title: String?
-        var image: Image?
-        var menuType: String?
-        var leftItemsSupplementBackButton: Bool?
-        var menuElements: [MenuElement]?
-        var menuTitle: String?
-        var identifier: String?
-    }
-
-    struct  TabBarItem: Codable {
-        var hideNavBar: Bool?
-        var navBar: NavBar?
-        var title: String?
-        var image: Image?
-        var systemItem: String?
-        var tag: Int?
-    }
-
-    var primaryURL: String?
-    var secondaryURL: String?
-    var supplementaryURL: String?
-    var compactURL: String?
-    var primaryTitle: String?
-    var secondaryTitle: String?
-    var supplementaryTitle: String?
-
-    var style: String?  // doubleColumn, tripleColumn
-    var preferredSplitBehavior: String?
-    var preferredDisplayMode: String?
-    var primaryColumnWidthFraction: CGFloat?
-    var preferredPrimaryColumnWidth: CGFloat?
-    var minimumPrimaryColumnWidth: CGFloat?
-    var maximumPrimaryColumnWidth: CGFloat?
-    var supplementaryColumnWidthFraction: CGFloat?
-    var supplementaryColumnWidth: CGFloat?
-    var maximumSupplementaryColumnWidth: CGFloat?
-    var minimumSupplementaryColumnWidth: CGFloat?
-    var primaryEdge: String?
-    var presentsWithGesture: Bool?
-    var showsSecondaryOnlyButton: Bool?
-
-    var backgroundColor: [CGFloat]?
-    var backgroundColorLight: [CGFloat]?
-    var backgroundColorDark: [CGFloat]?
-
-    var barButtonRight: BarButtonItem?
-    var barButtonLeft: BarButtonItem?
-
-    var navBarAppearance: NavBarAppearance?
-    var tintColor: [CGFloat]?  //will move into NavBarAppearance
-    var barTintColor: [CGFloat]? //will move into NavBarAppearance
-
-    var tabBarItems: [TabBarItem]?
-    var tabBar: TabBar?
-    var selectedTabIndex: Int?
-
-    var topColumnForCollapsingToProposedTopColumn: String?
-    var displayModeForExpandingToProposedDisplayMode: String?
-
-    var usesCompact: Bool?
-    var isEmbedded: Bool?
-    var fullscreen: Bool?
-    var makeRoot: Bool?
-    var horizScrollBarInvisible: Bool?
-    var vertScrollBarInvisible: Bool?
-    var preventHorizScroll: Bool?
+enum CollectionEvents: String {
+    case selectedListItem = "0"
 }
 
 @objc public class SplitView: CDVPlugin {
@@ -207,11 +41,15 @@ struct ViewProperties: Codable {
             for inx in 0...command.arguments.count-1 {
                 viewsProperties.append(command.arguments[inx] as? String)
             }
-        let splitViewController = RtViewController( viewProperties: viewsProperties)
-        if splitViewController.isRoot {
-            viewController.view.window?.rootViewController? = splitViewController
-            } else {
-                viewController.present(splitViewController, animated: true, completion: nil)
+            var viewMask: UIInterfaceOrientationMask = .all
+            if let CDVController = viewController as? CDVViewController {
+                viewMask = CDVController.supportedInterfaceOrientations
+            }
+            let splitViewController = RtViewController( viewProperties: viewsProperties, splitViewMask: viewMask)
+            if splitViewController.isRoot {
+                viewController.view.window?.rootViewController? = splitViewController
+                } else {
+                    viewController.present(splitViewController, animated: true, completion: nil)
             }
         } else {
             pluginResult = CDVPluginResult(status: CDVCommandStatus_ERROR, messageAs: "iOS 14 Required")
@@ -243,9 +81,20 @@ struct ViewProperties: Codable {
         guard let gAction  = command.arguments[0] as? String else {
             return
         }
-        if gAction == "dismiss" {
-            if let childController = viewController as? SpViewControllerChild {
+        if let childController = viewController as? SpViewControllerChild {
+            if gAction == "dismiss" {
                 childController.doAction(.dismiss, "", "")
+            } else if gAction == "setCollectionProperty" {
+                //for this release, there is only one CollectionView, the primary view
+                if let gTarget = command.arguments[1] as? [String], let gData  = command.arguments[2] as? [String] {
+                    childController.doAction(.setCollectionProperty, gTarget[0], gData[0])
+                }
+            } else if gAction == "fireCollectionEvent" {
+                if let gTarget = command.arguments[1] as? [String], let gData  = command.arguments[2] as? [String] {
+                    for target in gTarget {
+                        childController.doAction(.fireCollectionEvent, target, gData[0])
+                    }
+                }
             }
         }
     }
@@ -253,7 +102,9 @@ struct ViewProperties: Codable {
     @objc(selectTab:)
     func selectTab(command: CDVInvokedUrlCommand) {
         //only applies to compact view controller
-        if let currentView = viewController as? SpViewControllerCompact, let tabView = currentView.tabBarController as? TabBarController2, let index = command.arguments[0] as? Int {
+        if let currentView = viewController as? SpViewControllerCompact,
+           let tabView = currentView.tabBarController as? TabBarController2,
+           let index = command.arguments[0] as? Int {
             tabView.selectTab(index: index)
         }
     }
@@ -357,22 +208,34 @@ struct ViewProperties: Codable {
 
     @objc(primaryBackgroundColor:)
     func primaryBackgroundColor(command: CDVInvokedUrlCommand) {
-        initialProperties.masterBackgroundColor=setColor(red: command.arguments[0] as? CGFloat, green: command.arguments[1] as? CGFloat, blue: command.arguments[2] as? CGFloat, alpha: 1)
+        initialProperties.masterBackgroundColor=setColor(red: command.arguments[0] as? CGFloat,
+                                                         green: command.arguments[1] as? CGFloat,
+                                                         blue: command.arguments[2] as? CGFloat,
+                                                         alpha: 1)
     }
 
     @objc(secondaryBackgroundColor:)
     func secondaryBackgroundColor(command: CDVInvokedUrlCommand) {
-        initialProperties.detailBackgroundColor=setColor(red: command.arguments[0] as? CGFloat, green: command.arguments[1] as? CGFloat, blue: command.arguments[2] as? CGFloat, alpha: 1)
+        initialProperties.detailBackgroundColor=setColor(red: command.arguments[0] as? CGFloat,
+                                                         green: command.arguments[1] as? CGFloat,
+                                                         blue: command.arguments[2] as? CGFloat,
+                                                         alpha: 1)
     }
 
     @objc(tintColor:)
     func tintColor(command: CDVInvokedUrlCommand) {
-        initialProperties.tintColor=setColor(red: command.arguments[0] as? CGFloat, green: command.arguments[1] as? CGFloat, blue: command.arguments[2] as? CGFloat, alpha: 1)
+        initialProperties.tintColor=setColor(red: command.arguments[0] as? CGFloat,
+                                             green: command.arguments[1] as? CGFloat,
+                                             blue: command.arguments[2] as? CGFloat,
+                                             alpha: 1)
     }
 
     @objc(barTintColor:)
     func barTintColor(command: CDVInvokedUrlCommand) {
-        initialProperties.barTintColor=setColor(red: command.arguments[0] as? CGFloat, green: command.arguments[1] as? CGFloat, blue: command.arguments[2] as? CGFloat, alpha: 1)
+        initialProperties.barTintColor=setColor(red: command.arguments[0] as? CGFloat,
+                                                green: command.arguments[1] as? CGFloat,
+                                                blue: command.arguments[2] as? CGFloat,
+                                                alpha: 1)
     }
 
     @objc(primaryColumnWidth:)
@@ -448,40 +311,6 @@ struct ViewProperties: Codable {
            }
         return UIColor(red: rrr/255, green: ggg/255, blue: bbb/255, alpha: aaa)
     }
-}
-
-//
-// Only used for Classic View and will be phased out after iOS 14 becomes minimum supported version
-//
-// Default Settings
-//
-//  if not set, uses Apple defaults
-//
-struct InitialProperties {
-
-    var isEmbedded: Bool = false
-    var isDouble: Bool = true
-    var masterURL: String = PluginDefaults.primaryURLclassic
-    var detailURL: String = PluginDefaults.secondaryURLclassic
-    var primaryColumnWidthfraction: CGFloat?
-    var masterTitle: String?
-    var detailTitle: String?
-    var barTintColor: UIColor?
-    var tintColor: UIColor?
-    var minimumPrimaryColumnWidth: CGFloat?
-    var maximumPrimaryColumnWidth: CGFloat?
-    var displayModeButtonItem: Bool = true
-    var leftButtonTitle: String?
-    var rightButtonTitle: String?
-    var fullscreen: Bool = false            //meaningless for embedded case
-    var masterBackgroundColor: UIColor?
-    var detailBackgroundColor: UIColor?
-
-    // Tableview data.  Unused in  embedded case
-    //   maybe go with something less primitive if we add options
-    var usesTableView: Bool = false
-    var tableItems: [String] = []
-    var tableImages: [String] = []
 }
 
 //--------  =? operator --------------

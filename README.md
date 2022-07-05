@@ -2,15 +2,20 @@
 
 ## Native iOS Split View Demo
 
-![ ](https://raw.githubusercontent.com/j-crosson/cordova-plugin-split-view-demo/main/images/demoselections.png)
+Showcases Split View plugin features.
 
 The easiest way to run the demo is to download (or clone) the repo and run the project in Demo from Xcode. 
 
 
 The demo shows both new and classic view options in a modal view, supporting both light and dark mode. Typically a split view will be the app window's root view but a modal view allows all options to be presented in the demo without restart. 
 
-There is now an option to make the split view a root view but this does not apply to the classic split view.
+There is an option to make the split view a root view but this does not apply to the classic split view. An alternative option is to make the modal view full screen.  This option is used for the post-iOS14 demos. 
 To run the demo that simulates a root split view in classic split view, rename “indexRoot.html” to “index.html”. In "index.js", un-comment one of the lines indicated in the “root demo” comment.
+
+## New in 2.3
+* Collection View List (replaces classic-view TableView option)
+
+![ ](https://raw.githubusercontent.com/j-crosson/cordova-plugin-split-view/main/images/collectionViewFull.png)
 
 ## New in 2.2
 * Large Navigation Bar Titles in Primary View
@@ -18,7 +23,6 @@ To run the demo that simulates a root split view in classic split view, rename �
 * Tab Bar Appearance options
 * Scrollbar  options
 * iOS 15 Appearance updates
-
 
 ## New in 2.1
 * Navigation Bar buttons and context menus. 
@@ -28,8 +32,18 @@ The Two Column option demos System-Item buttons in the primary view and buttons 
 The Tab Bar System-Item option can be demoed by switching out commented-out code in index.js.
 
 
+### Demos
+![ ](https://raw.githubusercontent.com/j-crosson/cordova-plugin-split-view-demo/main/images/demoselections.png)
+
+The first four options are for apps targeting iOS14 and above; the two "Classic" options are for apps targeting earlier versions of iOS.
 
 ### Compact Tab
+
+There are two size classes: Regular, which you would find on a large device such as an iPad or a large iPhone in landscape, and Compact which you would find on smaller device or an iPad running multiple apps in a split screen. 
+
+The plug-in has the option of using a TabView for the Compact Size. The view will dynamically switch to/from a split view as the Size Class changes.  For example, when an iPhone 11 is rotated from portrait to landscape or when a second app is launched on an iPad. 
+
+
 **Regular size**
 
 ![ ](https://raw.githubusercontent.com/j-crosson/cordova-plugin-split-view/main/images/regulariPad.png)
@@ -38,11 +52,48 @@ The Tab Bar System-Item option can be demoed by switching out commented-out code
 
 ![ ](https://raw.githubusercontent.com/j-crosson/cordova-plugin-split-view/main/images/compactiPad.png)
 
+### Three Column
+
+Demonstrates the "Supplementary" column
+
+![ ](https://raw.githubusercontent.com/j-crosson/cordova-plugin-split-view-demo/main/images/threeview.png)
+
+
+### Two Column
+
+Demonstrates a split view with a  Primary and Secondary column
+
+### Native List
+
+![ ](https://raw.githubusercontent.com/j-crosson/cordova-plugin-split-view/main/images/collectionViewFull.png)
+
+The UICollectionView List replaces the UITableView for apps targeting iOS14 and above.
+
+There are two size classes: Regular, which you would find on a large device such as an iPad or a large iPhone in landscape, and Compact which you would find on smaller device or an iPad running multiple apps in a split screen. 
+
+**Regular Size**
+
+In this Demo for the Regular size class there are two columns: the primary is a Native List (UICollectionView), the secondary a webView. The menu demonstrates selecting list items in the primary view from the secondary webView.  
+
+| Menu Selection | Action |
+| --- | --- | 
+| none |  Selects "Listen Now" without scrolling. | 
+| bottom | Selects "Playlist 4", scrolls to bottom. | 
+| top | Selects  "Playlist 7", scrolls to top. | 
+| centered | Selects  "Playlist 8", centers selection. | 
+| Exit | Returns to main menu. | 
+
+
+If a section is collapsed, the section will be expanded before selecting an item.
+
+**Compact Size**
+
+The Compact display is a three-tab tabView.  The tabs are synced to the Native List:  selections are preserved when switching back and forth.
+
+![ ](https://raw.githubusercontent.com/j-crosson/cordova-plugin-split-view/main/images/collectionViewSplit.png)
 
 ### Classic Split Views
 ![ ](https://raw.githubusercontent.com/j-crosson/cordova-plugin-split-view-demo/main/images/landsc.png)
-![ ](https://raw.githubusercontent.com/j-crosson/cordova-plugin-split-view-demo/main/images/threeview.png)
-
 
 
 ## Embedding Option 

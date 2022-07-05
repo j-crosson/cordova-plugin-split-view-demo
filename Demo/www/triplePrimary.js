@@ -28,6 +28,6 @@ function recievedMessage(item)
 
 function goAway()
 {
-    cordova.plugins.SplitView.viewAction("dismiss",null,null);
+    cordova.plugins.SplitView.viewAction("dismiss");
 }
 

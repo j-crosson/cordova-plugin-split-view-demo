@@ -8,6 +8,28 @@ import Foundation
 import UIKit
 import WebKit
 
+private let sysItem: [String: UIBarButtonItem.SystemItem] = ["done": .done,
+                                                             "cancel": .cancel,
+                                                             "edit": .edit,
+                                                             "save": .save,
+                                                             "add": .add,
+                                                             "compose": .compose,
+                                                             "reply": .reply,
+                                                             "action": .action,
+                                                             "organize": .organize,
+                                                             "bookmarks": .bookmarks,
+                                                             "search": .search,
+                                                             "refresh": .refresh,
+                                                             "stop": .stop,
+                                                             "camera": .camera,
+                                                             "trash": .trash,
+                                                             "play": .play,
+                                                             "pause": .pause,
+                                                             "rewind": .rewind,
+                                                             "fastForward": .fastForward,
+                                                             "undo": .undo,
+                                                             "redo": .redo]
+
 class SpViewControllerChild: CDVViewController, UIScrollViewDelegate {
     var initialBackgroundColor: UIColor?
     var isReady = false //set when webview wants messages
@@ -18,13 +40,6 @@ class SpViewControllerChild: CDVViewController, UIScrollViewDelegate {
     var horizScrollBarInvisible = false
     var vertScrollBarInvisible = false
     var preventHorizScroll = false
-
-    enum ViewEvents: String {
-        case buttonEvent = "0"
-        case tabBarEvent = "1"
-        //previous versions had separate right and left tap events as well as a menu-item-selected event
-        //now each action has a unique ID 
-   }
 
     init(backgroundColor: UIColor?, page: String) {
         super.init(nibName: nil, bundle: nil)
@@ -147,40 +162,22 @@ class SpViewControllerChild: CDVViewController, UIScrollViewDelegate {
         }
 
         if childProperties.decodeProperties(json: props) {
-            setScrollProperties(horizBarInvisible: childProperties.viewProps.horizScrollBarInvisible ?? false, vertBarInvisible: childProperties.viewProps.vertScrollBarInvisible ?? false, noHorizScroll: childProperties.viewProps.preventHorizScroll ?? false)
+            setScrollProperties(horizBarInvisible: childProperties.viewProps.horizScrollBarInvisible ?? false,
+                                vertBarInvisible: childProperties.viewProps.vertScrollBarInvisible ?? false,
+                                noHorizScroll: childProperties.viewProps.preventHorizScroll ?? false)
             navigationController?.navigationBar.tintColor =? childProperties.setColor(childProperties.viewProps.tintColor)
             navigationController?.navigationBar.barTintColor =? childProperties.setColor(childProperties.viewProps.barTintColor)
             if let rightButton = childProperties.viewProps.barButtonRight {
                 setButton(navController, buttonItem: rightButton, isRight: true, leftItemsSuppBack: false)
             }
             if let leftButton = childProperties.viewProps.barButtonLeft {
-                setButton(navController, buttonItem: leftButton, isRight: false, leftItemsSuppBack: childProperties.viewProps.barButtonLeft?.leftItemsSupplementBackButton ?? false)
+                setButton(navController,
+                          buttonItem: leftButton,
+                          isRight: false,
+                          leftItemsSuppBack: childProperties.viewProps.barButtonLeft?.leftItemsSupplementBackButton ?? false)
             }
-            setNavBarAppearance(navController, appearance: childProperties.viewProps.navBarAppearance)
-        }
-    }
-
-    func setNavBarAppearance(_ navController: UINavigationController, appearance: ViewProperties.NavBarAppearance?) {
-        navBarPrefersLargeTitles =? appearance?.prefersLargeTitles
-        if #available(iOS 14.0, *) {
-            if appearance?.background == "transparent" {
-                let appearance = UINavigationBarAppearance()
-                appearance.configureWithTransparentBackground()
-                navController.navigationBar.scrollEdgeAppearance = appearance
-                navController.navigationBar.standardAppearance = appearance
-            }
-            if appearance?.background == "opaque" {
-                let appearance = UINavigationBarAppearance()
-                appearance.configureWithOpaqueBackground()
-                navController.navigationBar.scrollEdgeAppearance = appearance
-                navController.navigationBar.standardAppearance = appearance
-            }
-            if appearance?.background == "default" {
-                let appearance = UINavigationBarAppearance()
-                appearance.configureWithDefaultBackground()
-                navController.navigationBar.scrollEdgeAppearance = appearance
-                navController.navigationBar.standardAppearance = appearance
-            }
+            navBarPrefersLargeTitles = childProperties.setNavBarAppearance(navController,
+                                                                           appearance: childProperties.viewProps.navBarAppearance)
         }
     }
 
@@ -191,12 +188,13 @@ class SpViewControllerChild: CDVViewController, UIScrollViewDelegate {
         preventHorizScroll = noHorizScroll
     }
 
-    func setButton(_ navController: UINavigationController, buttonItem: ViewProperties.BarButtonItem, isRight: Bool, leftItemsSuppBack: Bool) {
+    func setButton(_ navController: UINavigationController,
+                   buttonItem: ViewProperties.BarButtonItem,
+                   isRight: Bool,
+                   leftItemsSuppBack: Bool) {
         //
         // system items for buttons
         //
-        let sysItem: [String: UIBarButtonItem.SystemItem] = ["done": .done, "cancel": .cancel, "edit": .edit, "save": .save, "add": .add, "compose": .compose, "reply": .reply, "action": .action, "organize": .organize, "bookmarks": .bookmarks, "search": .search, "refresh": .refresh, "stop": .stop, "camera": .camera, "trash": .trash, "play": .play, "pause": .pause, "rewind": .rewind, "fastForward": .fastForward, "undo": .undo, "redo": .redo]
-
         guard let buttonType = buttonItem.type else {
             return
         }
@@ -205,12 +203,16 @@ class SpViewControllerChild: CDVViewController, UIScrollViewDelegate {
         //
         navController.navigationBar.topItem?.leftItemsSupplementBackButton = leftItemsSuppBack
         if #available(iOS 14.0, *) {
-        let menuAttributes: [String: UIMenuElement.Attributes] = ["destructive": .destructive, "disabled": .disabled, "hidden": .hidden]
+        let menuAttributes: [String: UIMenuElement.Attributes] = ["destructive": .destructive,
+                                                                  "disabled": .disabled,
+                                                                  "hidden": .hidden]
         var primaryAct: UIAction?
         var barButtonItm: UIBarButtonItem?
         var theMenu: UIMenu?
 
-        primaryAct =  UIAction( identifier: UIAction.Identifier(buttonItem.identifier ?? ""), handler: buttonHandler)
+        primaryAct = UIAction( ) { [unowned self]  _ in
+                eventHandle(ViewEvents.buttonEvent, data: buttonItem.identifier  ?? "")
+        }
         if let menuElements = buttonItem.menuElements {
             var menuChildren = [UIAction]()
             for item in menuElements {
@@ -222,12 +224,15 @@ class SpViewControllerChild: CDVViewController, UIScrollViewDelegate {
                         }
                     }
                 }
-                menuChildren.append( UIAction(title: item.title ?? "", image: newImage(image: item.menuImage), identifier: UIAction.Identifier(item.identifier ?? ""), attributes: atts, handler: buttonHandler))
+                menuChildren.append( UIAction(title: item.title ?? "",
+                                              image: newImage(image: item.menuImage),
+                                              identifier: UIAction.Identifier(item.identifier ?? ""),
+                                              attributes: atts, handler: {  [unowned self] (_) in eventHandle(ViewEvents.buttonEvent, data: item.identifier  ?? "")
+                }))
             }
             theMenu = UIMenu(title: buttonItem.menuTitle ?? "", options: .displayInline, children: menuChildren)
             //we don't test for all bad behavior, in those cases we default to "menu"
             if buttonItem.menuType == "menuLongPress" {
-                primaryAct =  UIAction(identifier: UIAction.Identifier(buttonItem.identifier ?? ""), handler: buttonHandler)
             } else {
                 primaryAct = nil
             }
@@ -247,7 +252,9 @@ class SpViewControllerChild: CDVViewController, UIScrollViewDelegate {
             barButtonItm = UIBarButtonItem( systemItem: sysEnum, primaryAction: primaryAct, menu: theMenu)
 
         case  "image":
-            barButtonItm = UIBarButtonItem( image: newImage(image: buttonItem.image), primaryAction: primaryAct, menu: theMenu)
+            barButtonItm = UIBarButtonItem( image: newImage(image: buttonItem.image),
+                                            primaryAction: primaryAct,
+                                            menu: theMenu)
 
         default:
             return
@@ -261,13 +268,11 @@ class SpViewControllerChild: CDVViewController, UIScrollViewDelegate {
         }
     }
 
-    @available(iOS 14.0, *)
-    func buttonHandler(from action: UIAction) {
-        eventHandle(ViewEvents.buttonEvent, data: action.identifier.rawValue)
-    }
-
     //
     // handles all child events
+    //
+    // this will be replaced in a future version which
+    // will update event handling
     //
     func eventHandle(_ event: ViewEvents, data: String = "" ) {
         commandDelegate.evalJs( "cordova.plugins.SplitView.onAction('\(event.rawValue)','\(data)');")

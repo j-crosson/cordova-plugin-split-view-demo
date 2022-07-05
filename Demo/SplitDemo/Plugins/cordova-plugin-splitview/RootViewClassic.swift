@@ -28,14 +28,18 @@ import Foundation
 
         //Master View is either a tableview or a webview depending on option
         if iprop.usesTableView {
-            viewControllerMasterTable = SpViewControllerTable(itemArray: iprop.tableItems, imageArray: iprop.tableImages)
+            viewControllerMasterTable = SpViewControllerTable(itemArray: iprop.tableItems,
+                                                              imageArray: iprop.tableImages)
             primaryViewController = (UINavigationController(rootViewController: viewControllerMasterTable!))
         } else {
-            viewControllerMaster = SpViewController(backgroundColor: iprop.masterBackgroundColor, page: iprop.masterURL, isEmbedded: iprop.isEmbedded)
+            viewControllerMaster = SpViewController(backgroundColor: iprop.masterBackgroundColor,
+                                                    page: iprop.masterURL,
+                                                    isEmbedded: iprop.isEmbedded)
             primaryViewController = (UINavigationController(rootViewController: viewControllerMaster!))
         }
 
-        viewControllerDetail = SpViewControllerDetail(backgroundColor: iprop.detailBackgroundColor, page: iprop.detailURL)
+        viewControllerDetail = SpViewControllerDetail(backgroundColor: iprop.detailBackgroundColor,
+                                                      page: iprop.detailURL)
         secondaryViewController = UINavigationController(rootViewController: viewControllerDetail)
 
         super.init(nibName: nil, bundle: nil)
@@ -44,10 +48,14 @@ import Foundation
             modalPresentationStyle = .fullScreen
         }
         if iprop.leftButtonTitle != nil { //if there is a title, create button
-        primaryViewController.navigationBar.topItem?.leftBarButtonItem = UIBarButtonItem(title: iprop.leftButtonTitle, style: .plain, target: self, action: #selector(leftButtonTapped))
+        primaryViewController.navigationBar.topItem?.leftBarButtonItem = UIBarButtonItem(title: iprop.leftButtonTitle,
+                                                                                         style: .plain, target: self,
+                                                                                         action: #selector(leftButtonTapped))
          }
         if iprop.rightButtonTitle != nil { //if there is a title, create button
-        primaryViewController.navigationBar.topItem?.rightBarButtonItem = UIBarButtonItem(title: iprop.rightButtonTitle, style: .plain, target: self, action: #selector(rightButtonTapped))
+        primaryViewController.navigationBar.topItem?.rightBarButtonItem = UIBarButtonItem(title: iprop.rightButtonTitle,
+                                                                                          style: .plain, target: self,
+                                                                                          action: #selector(rightButtonTapped))
         }
 
         //  titles
@@ -106,7 +114,9 @@ import Foundation
         dismiss(animated: true, completion: nil)
     }
 
-    func splitViewController(_ splitViewController: UISplitViewController, collapseSecondary secondaryViewController: UIViewController, onto primaryViewController: UIViewController) -> Bool {
+    func splitViewController(_ splitViewController: UISplitViewController,
+                             collapseSecondary secondaryViewController: UIViewController,
+                             onto primaryViewController: UIViewController) -> Bool {
       let navigationController = secondaryViewController as? UINavigationController
       let detailViewController = navigationController?.topViewController
       return !(detailViewController?.isViewLoaded ?? true)

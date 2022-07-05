@@ -65,6 +65,14 @@ SplitView.prototype.selectTab = function ( tab, success, error) {
 };
 
 //
+// viewAction
+//
+        
+SplitView.prototype.viewAction = function ( action, targets = ["self"], data = [""],success = null, error = null) {
+    exec(success, error, 'SplitView', 'viewAction', [action,targets,data]);
+};
+
+//
 // recieve string from sendMessage
 //
 
@@ -72,6 +80,24 @@ SplitView.prototype.onMessage = function(item) {
         this.message(item);
 };
 
+
+//
+// view event handler
+//
+SplitView.prototype.onAction = function(event,data){
+        this.action(event,data);
+};
+
+
+SplitView.prototype.viewEvents ={
+    buttonEvent:    "0",
+    tabBarEvent:    "1",
+    collectionEvent:  "2"
+};
+
+SplitView.prototype.collectionEvents ={
+    selectedListItem:    "0",
+    };
 
 
 // The following is Classic View Only

@@ -13,25 +13,38 @@ import Foundation
 
 @available(iOS 14.0, *)
 func newImage(image: ViewProperties.Image?) -> UIImage? {
-    let symbolScale: [String: UIImage.SymbolScale] = ["default": .default, "unspecified": .unspecified, "small": .small, "medium": .medium, "large": .large]
+    let symbolScale: [String: UIImage.SymbolScale] = ["default": .default,
+                                                      "unspecified": .unspecified,
+                                                      "small": .small,
+                                                      "medium": .medium,
+                                                      "large": .large]
 
-    let symbolWeight: [String: UIImage.SymbolWeight] = ["unspecified": .unspecified, "ultraLight": .ultraLight, "thin": .thin, "light": .light, "regular": .regular, "medium": .medium, "semibold": .semibold, "bold": .bold, "heavy": .heavy, "black": .black]
+    let symbolWeight: [String: UIImage.SymbolWeight] = ["unspecified": .unspecified,
+                                                        "ultraLight": .ultraLight,
+                                                        "thin": .thin,
+                                                        "light": .light,
+                                                        "regular": .regular,
+                                                        "medium": .medium,
+                                                        "semibold": .semibold,
+                                                        "bold": .bold,
+                                                        "heavy": .heavy,
+                                                        "black": .black]
 
     //only "symbol"  or "file" is valid
-    guard (image?.type == "symbol" || image?.type == "file")  else{
+    guard (image?.type == "symbol") || (image?.type == "file")  else {
        return nil
     }
-    
-    guard let theName = image?.name  else{
+
+    guard let theName = image?.name  else {
        return nil
     }
-    
+
     if image?.type == "file" {
         return UIImage(contentsOfFile: theName)
     }
-    
+
     var config = UIImage.SymbolConfiguration(scale: .default)
-  
+
     if let symbolConfig = image?.symbolConfig {
         for item in symbolConfig {
             switch item.type {
@@ -45,7 +58,7 @@ func newImage(image: ViewProperties.Image?) -> UIImage? {
                     let config1 =  UIImage.SymbolConfiguration(weight: weightEnum)
                     config = config.applying(config1)
                 }
-           default:
+            default:
                 continue
             }
         }

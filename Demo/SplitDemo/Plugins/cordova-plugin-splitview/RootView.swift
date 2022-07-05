@@ -7,8 +7,9 @@
 import Foundation
 
 enum SplitViewAction {
-    case sendmessage, show, hide, setProperties, dismiss
+    case sendmessage, show, hide, setProperties, dismiss, listItemSelected, setCollectionProperty, fireCollectionEvent
 }
+
 @available(iOS 14.0, *)
 @objc class RtViewController: UISplitViewController, UISplitViewControllerDelegate {
     enum DismissedBy: String {
@@ -16,11 +17,12 @@ enum SplitViewAction {
         case left = "1"
         case right = "2"
     }
-    var viewControllerDetail: SpViewControllerDetail
-    var secondaryViewController: UINavigationController
+    var viewControllerDetail: SpViewControllerDetail?
+    var secondaryViewController: UINavigationController?
     var supplementaryViewController: UINavigationController?
     var viewControllerSupplementary: SpViewControllerSupplementary?
     var compactTabBarController: TabBarController2?
+    var collectionController: SpCollectionViewController?
     var resultsClosure: ((_ returnString: String, String) -> Void)?
     var resultsString = ""
     var exitPath = DismissedBy.swipe //buttons will set left or right
@@ -31,11 +33,16 @@ enum SplitViewAction {
     var isEmbedded = false
     var isDouble = true
     var isRoot = false
+    private var splitMask: UIInterfaceOrientationMask = .all
     @available(iOS 14.0, *)
     private(set) lazy var topColForCollapsToProposedTopCol: UISplitViewController.Column? = nil
     private(set) lazy var dispModeForExpandingToProposedDispMode: UISplitViewController.DisplayMode? = nil
 
-    init(viewProperties: [String?]) {
+    override var supportedInterfaceOrientations: UIInterfaceOrientationMask {
+        return splitMask
+    }
+
+    init(viewProperties: [String?], splitViewMask: UIInterfaceOrientationMask = .all) {
         if !viewProperties.isEmpty {
             if let jsonAg = viewProperties[0] {
                 if rootProperties.decodeProperties(json: jsonAg) {
@@ -46,20 +53,34 @@ enum SplitViewAction {
             }
         }
 
+        splitMask = splitViewMask //default is "all"
+
         var primaryViewController: UINavigationController
 
-        viewControllerMaster = SpViewController(backgroundColor: rootProperties.backgroundColor, page: rootProperties.viewProps.primaryURL ?? PluginDefaults.primaryURL, isEmbedded: isEmbedded)
+        if rootProperties.viewProps.viewConfig?.primary == "collectionList" {
+            let layout = createLayout()
+            collectionController = SpCollectionViewController(properties: viewProperties[1], collectionViewLayout: layout)
+            collectionController?.configureDataSource()
+            primaryViewController = (UINavigationController(rootViewController: collectionController!))
+            collectionController?.setNavProperties()
+        } else {
+            viewControllerMaster = SpViewController(backgroundColor: rootProperties.backgroundColor, page: rootProperties.viewProps.primaryURL ?? PluginDefaults.primaryURL, isEmbedded: isEmbedded)
+            primaryViewController = (UINavigationController(rootViewController: viewControllerMaster!))
+
+        }
+
         viewControllerDetail = SpViewControllerDetail(backgroundColor: rootProperties.backgroundColor, page: rootProperties.viewProps.secondaryURL ?? PluginDefaults.secondaryURL)
 
-        primaryViewController = (UINavigationController(rootViewController: viewControllerMaster!))
-        secondaryViewController = UINavigationController(rootViewController: viewControllerDetail)
+        if let vcd =  viewControllerDetail {
+            secondaryViewController = UINavigationController(rootViewController: vcd)
+        }
 
         if let propertiesString = viewProperties[1] {
-                viewControllerMaster?.setProperties(props: propertiesString)
+            viewControllerMaster?.setProperties(props: propertiesString)
         }
 
         if let propertiesString = viewProperties[2] {
-                viewControllerDetail.setProperties(props: propertiesString)
+            viewControllerDetail?.setProperties(props: propertiesString)
         }
 
         if !isDouble {
@@ -75,58 +96,82 @@ enum SplitViewAction {
             }
         }
 
-            super.init(style: isDouble ? .doubleColumn : .tripleColumn)
+        super.init(style: isDouble ? .doubleColumn : .tripleColumn)
 
-            setSplitViewProperties()
+        setSplitViewProperties()
 
-            let sendMessage: (String, String, SplitViewAction) -> Void = { [unowned self] in
-                let childViews: [String: UISplitViewController.Column] = ["primary": .primary, "secondary": .secondary, "supplementary": .supplementary, "compact": .compact]
-                if $2 == SplitViewAction.sendmessage {
+        //handling listItemSelected, setCollectionProperty here for this release only
+        //
+        let sendMessage: (String, String, SplitViewAction) -> Void = { [unowned self] in
+            let childViews: [String: UISplitViewController.Column] = ["primary": .primary, "secondary": .secondary, "supplementary": .supplementary, "compact": .compact]
+            if $2 == SplitViewAction.sendmessage {
+                switch $0 {
+                case "primary":
+                    viewControllerMaster?.getMsg(msg: $1)
+                    //  collectionController?.getMsg(msg: $1)  currently no supported messages in this view
+                case "secondary":
+                    viewControllerDetail?.getMsg(msg: $1)
+                case "supplementary":
+                    viewControllerSupplementary?.getMsg(msg: $1)
+                case "compact":
+                    compactTabBarController?.viewControllerCompact.getMsg(msg: $1)
+                default:
+                    return
+                }
+            //action handling will be updated in future versions
+            } else if $2 == SplitViewAction.show {
+                    if let childView = childViews[$0] {
+                        show(childView)
+                    }
+                } else if $2 == SplitViewAction.hide {
+                    if let childView = childViews[$0] {
+                        hide(childView)
+                    }
+                } else if $2 == SplitViewAction.setProperties {
+                    rootProperties.decodeProperties(json: $0)
+                    setSplitViewProperties()
+                } else if $2 == SplitViewAction.dismiss {
+                    dismiss(animated: true, completion: nil)
+                //won't attempt any optimizations: this will be replaced in future versions
+                } else if $2 == SplitViewAction.listItemSelected ||  $2 == SplitViewAction.fireCollectionEvent {
                     switch $0 {
                     case "primary":
-                       viewControllerMaster?.getMsg(msg: $1)
+                        viewControllerMaster?.commandDelegate.evalJs( "cordova.plugins.SplitView.onAction('\(ViewEvents.collectionEvent.rawValue)','\($1)');")
                     case "secondary":
-                        viewControllerDetail.getMsg(msg: $1)
+                        viewControllerDetail?.commandDelegate.evalJs( "cordova.plugins.SplitView.onAction('\(ViewEvents.collectionEvent.rawValue)','\($1)');")
                     case "supplementary":
-                        viewControllerSupplementary?.getMsg(msg: $1)
+                        viewControllerSupplementary?.commandDelegate.evalJs( "cordova.plugins.SplitView.onAction('\(ViewEvents.collectionEvent.rawValue)','\($1)');")
                     case "compact":
-                        compactTabBarController?.viewControllerCompact.getMsg(msg: $1)
+                        compactTabBarController?.viewControllerCompact.commandDelegate.evalJs( "cordova.plugins.SplitView.onAction('\(ViewEvents.collectionEvent.rawValue)','\($1)');")
                     default:
                         return
                     }
-                } else if $2 == SplitViewAction.show {
-                        if let childView = childViews[$0] {
-                            show(childView)
-                        }
-                    } else if $2 == SplitViewAction.hide {
-                        if let childView = childViews[$0] {
-                            hide(childView)
-                        }
-                    } else if $2 == SplitViewAction.setProperties {
-                        rootProperties.decodeProperties(json: $0)
-                        setSplitViewProperties()
-                    } else if $2 == SplitViewAction.dismiss {
-                        dismiss(animated: true, completion: nil)
-                    }
+                // for this version, collectionView is always primary
+                } else if $2 == SplitViewAction.setCollectionProperty {
+                    collectionController?.getMsg(msg: $1)
+                }
             }
 
             viewControllerMaster?.webViewMessage = sendMessage
-            viewControllerDetail.webViewMessage = sendMessage
+            viewControllerDetail?.webViewMessage = sendMessage
             viewControllerSupplementary?.webViewMessage = sendMessage
+            collectionController?.webViewMessage = sendMessage
 
             primaryViewController.navigationBar.topItem?.title =? rootProperties.viewProps.primaryTitle
-            secondaryViewController.navigationBar.topItem?.title =? rootProperties.viewProps.secondaryTitle
+            secondaryViewController?.navigationBar.topItem?.title =? rootProperties.viewProps.secondaryTitle
             primaryViewController.navigationBar.barTintColor = rootProperties.setColor(rootProperties.viewProps.barTintColor)
-            secondaryViewController.navigationBar.barTintColor = rootProperties.setColor(rootProperties.viewProps.barTintColor)
+            secondaryViewController?.navigationBar.barTintColor = rootProperties.setColor(rootProperties.viewProps.barTintColor)
             primaryViewController.navigationBar.tintColor =  rootProperties.setColor(rootProperties.viewProps.tintColor)
-            secondaryViewController.navigationBar.tintColor =  rootProperties.setColor(rootProperties.viewProps.tintColor)
+            secondaryViewController?.navigationBar.tintColor =  rootProperties.setColor(rootProperties.viewProps.tintColor)
 
             setViewController(primaryViewController, for: .primary)
             setViewController(secondaryViewController, for: .secondary)
             if usesCompact {
-                compactTabBarController =  TabBarController2(viewControllerDetail, "xx", properties: viewProperties[4])
+                if let vcd = viewControllerDetail {
+                compactTabBarController =  TabBarController2(vcd, "xx", properties: viewProperties[4])
                 setViewController(compactTabBarController, for: .compact)
-                compactTabBarController?.viewControllerCompact.webViewMessage = viewControllerMaster?.webViewMessage
+                compactTabBarController?.viewControllerCompact.webViewMessage = sendMessage
+                }
             }
             if !isDouble {
                 setViewController(supplementaryViewController, for: .supplementary)
@@ -143,10 +188,22 @@ enum SplitViewAction {
      }
 
     func setSplitViewProperties() {
-            let behave: [String: UISplitViewController.SplitBehavior] = ["automatic": .automatic, "displace": .displace, "overlay": .overlay, "tile": .tile]
-            let displayMode: [String: UISplitViewController.DisplayMode] = ["automatic": .automatic, "secondaryOnly": .secondaryOnly, "oneBesideSecondary": .oneBesideSecondary, "oneOverSecondary": .oneOverSecondary, "twoBesideSecondary": .twoBesideSecondary, "twoOverSecondary": .twoOverSecondary, "twoDisplaceSecondary": .twoDisplaceSecondary]
+            let behave: [String: UISplitViewController.SplitBehavior] = ["automatic": .automatic,
+                                                                         "displace": .displace,
+                                                                         "overlay": .overlay,
+                                                                         "tile": .tile]
+            let displayMode: [String: UISplitViewController.DisplayMode] = ["automatic": .automatic,
+                                                                            "secondaryOnly": .secondaryOnly,
+                                                                            "oneBesideSecondary": .oneBesideSecondary,
+                                                                            "oneOverSecondary": .oneOverSecondary,
+                                                                            "twoBesideSecondary": .twoBesideSecondary,
+                                                                            "twoOverSecondary": .twoOverSecondary,
+                                                                            "twoDisplaceSecondary": .twoDisplaceSecondary]
             let priEdge: [String: UISplitViewController.PrimaryEdge] = ["leading": .leading, "trailing": .trailing]
-            let columnType: [String: UISplitViewController.Column] = ["primary": .primary, "supplementary": .supplementary, "secondary": .secondary, "compact": .compact]
+            let columnType: [String: UISplitViewController.Column] = ["primary": .primary,
+                                                                      "supplementary": .supplementary,
+                                                                      "secondary": .secondary,
+                                                                      "compact": .compact]
 
             if let splitB = rootProperties.viewProps.preferredSplitBehavior, let behaveEnum = behave[splitB] {
                 preferredSplitBehavior = behaveEnum
@@ -197,7 +254,9 @@ enum SplitViewAction {
     }
     override func viewDidDisappear(_ animated: Bool) {
         super.viewDidDisappear(animated)
-        resultsClosure?(viewControllerDetail.detailResults, exitPath.rawValue)
+        if let vcd = viewControllerDetail {
+        resultsClosure?(vcd.detailResults, exitPath.rawValue)
+        }
     }
 
     func splitViewController(_ svc: UISplitViewController,

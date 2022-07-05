@@ -58,19 +58,18 @@ class SpViewControllerCompact: SpViewControllerChild {
     override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
         super.viewWillTransition(to: size, with: coordinator)
         let wkWebView = webViewEngine?.engineWebView as? WKWebView
-           coordinator.animate(alongsideTransition: { _ in
-               if let scrollVw = wkWebView?.scrollView {
-                   let bottomEdge = scrollVw.contentOffset.y + scrollVw.frame.size.height
-                   self.setBarToScrollEdgeAppearance(bottomEdge >= scrollVw.contentSize.height ? ScrollEdgeState.isEdge : ScrollEdgeState.notEdge)
-               }
-           }, completion: nil)
-}
+        coordinator.animate(alongsideTransition: { _ in
+            if let scrollVw = wkWebView?.scrollView {
+                let bottomEdge = scrollVw.contentOffset.y + scrollVw.frame.size.height
+                self.setBarToScrollEdgeAppearance(bottomEdge >= scrollVw.contentSize.height ? ScrollEdgeState.isEdge : ScrollEdgeState.notEdge)
+            }
+        }, completion: nil)
+    }
 
     //    force scrollEdgeAppearance
     //    Workaround for current behavior of TabBars
     //
     //    Also workaround for large-title navBars
-
     override func scrollViewDidScroll(_ scrollView: UIScrollView) {
         if preventHorizScroll {
            if scrollView.contentOffset.x != 0 {
@@ -114,6 +113,7 @@ class SpViewControllerCompact: SpViewControllerChild {
                 appearance.configureWithDefaultBackground()
             }
             tabBarController?.tabBar.standardAppearance = appearance
+            tabBarController?.tabBar.scrollEdgeAppearance = appearance
             scrollEdge = isEdge
         }
     }
@@ -137,9 +137,12 @@ class TabBarController2: UITabBarController, UITabBarControllerDelegate {
             }
         }
 
-        viewControllerCompact = SpViewControllerCompact(backgroundColor: compactProperties.backgroundColor, page: compactProperties.viewProps.compactURL ?? PluginDefaults.compactURL)
+        viewControllerCompact = SpViewControllerCompact(backgroundColor: compactProperties.backgroundColor,
+                                                        page: compactProperties.viewProps.compactURL ?? PluginDefaults.compactURL)
         super.init(nibName: nil, bundle: nil)
-        viewControllerCompact.setScrollProperties(horizBarInvisible: compactProperties.viewProps.horizScrollBarInvisible ?? false, vertBarInvisible: compactProperties.viewProps.vertScrollBarInvisible ?? false, noHorizScroll: compactProperties.viewProps.preventHorizScroll ?? false)
+        viewControllerCompact.setScrollProperties(horizBarInvisible: compactProperties.viewProps.horizScrollBarInvisible ?? false,
+                                                  vertBarInvisible: compactProperties.viewProps.vertScrollBarInvisible ?? false,
+                                                  noHorizScroll: compactProperties.viewProps.preventHorizScroll ?? false)
     }
 
     required init?(coder: NSCoder) {
@@ -210,7 +213,8 @@ class TabBarController2: UITabBarController, UITabBarControllerDelegate {
     // so we stop scrolling and internally fire a select after a timeout.
     // Not thrilled with the timout, but it seems to work and will stay
     // until something better appears
-    func tabBarController(_ tabBarController: UITabBarController, shouldSelect viewController: UIViewController) -> Bool {
+    func tabBarController(_ tabBarController: UITabBarController,
+                          shouldSelect viewController: UIViewController) -> Bool {
         guard let index = viewControllers?.firstIndex(of: viewController) else {
             return false
         }
@@ -224,7 +228,7 @@ class TabBarController2: UITabBarController, UITabBarControllerDelegate {
                     self.selectTab(index: index)
                     let tag = viewController.tabBarItem.tag
                     let newitem = String(tag)
-                    self.viewControllerCompact.eventHandle(SpViewControllerCompact.ViewEvents.tabBarEvent, data: newitem)
+                    self.viewControllerCompact.eventHandle(ViewEvents.tabBarEvent, data: newitem)
                 }
             return false
             }
@@ -237,7 +241,7 @@ class TabBarController2: UITabBarController, UITabBarControllerDelegate {
             moveView(vcc, index: selectedIndex)
             let tag = vcc.tabBarItem.tag
             let newitem = String(tag)
-            viewControllerCompact.eventHandle(SpViewControllerCompact.ViewEvents.tabBarEvent, data: newitem)
+            viewControllerCompact.eventHandle(ViewEvents.tabBarEvent, data: newitem)
         }
     }
 
@@ -246,23 +250,36 @@ class TabBarController2: UITabBarController, UITabBarControllerDelegate {
     self.delegate = self
     setTabViewProperties()
     if #available(iOS 14.0, *) {
-        let sysItem: [String: UITabBarItem.SystemItem] = ["bookmarks": .bookmarks, "contacts": .contacts, "downloads": .downloads, "favorites": .favorites, "featured": .featured, "history": .history, "more": .more, "mostRecent": .mostRecent, "mostViewed": .mostViewed, "recents": .recents, "search": .search, "topRated": .topRated]
+        let sysItem: [String: UITabBarItem.SystemItem] = ["bookmarks": .bookmarks,
+                                                          "contacts": .contacts,
+                                                          "downloads": .downloads,
+                                                          "favorites": .favorites,
+                                                          "featured": .featured,
+                                                          "history": .history,
+                                                          "more": .more,
+                                                          "mostRecent": .mostRecent,
+                                                          "mostViewed": .mostViewed,
+                                                          "recents": .recents,
+                                                          "search": .search,
+                                                          "topRated": .topRated]
 
-        if let barItems = compactProperties.viewProps.tabBarItems {
-            tabViewControllers = barItems.map {
-                let viewController = UINavigationController()
-                viewController.isNavigationBarHidden = $0.hideNavBar ?? true
-
-                if $0.systemItem != nil {
-                    if let systItem = sysItem[$0.systemItem ?? ""] {
-                        viewController.tabBarItem = UITabBarItem(tabBarSystemItem: systItem, tag: $0.tag ?? 0)
-                    }
-                } else {
-                    viewController.tabBarItem = UITabBarItem(title: $0.title, image: newImage(image: $0.image), tag: $0.tag ?? 0)
+    if let barItems = compactProperties.viewProps.tabBarItems {
+        tabViewControllers = barItems.map {
+            let viewController = UINavigationController()
+            viewController.isNavigationBarHidden = $0.hideNavBar ?? true
+            if $0.systemItem != nil {
+                if let systItem = sysItem[$0.systemItem ?? ""] {
+                    viewController.tabBarItem = UITabBarItem(tabBarSystemItem: systItem, tag: $0.tag ?? 0)
                 }
-                viewController.navigationBar.prefersLargeTitles = compactProperties.setNavBarAppearance(viewController, appearance: $0.navBar?.appearance)
-                navBarTitles.append( $0.navBar?.title ?? "")
-                return viewController
+            } else {
+                viewController.tabBarItem = UITabBarItem(title: $0.title,
+                                                         image: newImage(image: $0.image),
+                                                         tag: $0.tag ?? 0)
+            }
+            viewController.navigationBar.prefersLargeTitles = compactProperties.setNavBarAppearance(viewController,
+                                                                                                    appearance: $0.navBar?.appearance)
+            navBarTitles.append( $0.navBar?.title ?? "")
+            return viewController
             }
         }
     }
