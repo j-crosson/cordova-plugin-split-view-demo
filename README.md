@@ -15,7 +15,7 @@ To run the demo that simulates a root split view in classic split view, rename â
 ## New in 2.3
 * Collection View List (replaces classic-view TableView option)
 
-![ ](https://raw.githubusercontent.com/j-crosson/cordova-plugin-split-view/main/images/collectionViewFull.png)
+![ ](https://raw.githubusercontent.com/j-crosson/cordova-plugin-split-view-demo/main/images/collectionViewFull.png)
 
 ## New in 2.2
 * Large Navigation Bar Titles in Primary View
