@@ -65,7 +65,7 @@ Demonstrates a split view with a  Primary and Secondary column
 
 ### Native List
 
-![ ](https://raw.githubusercontent.com/j-crosson/cordova-plugin-split-view/main/images/collectionViewFull.png)
+![ ](https://raw.githubusercontent.com/j-crosson/cordova-plugin-split-view-demo/main/images/collectionViewFull.png)
 
 The UICollectionView List replaces the UITableView for apps targeting iOS14 and above.
 
@@ -90,7 +90,7 @@ If a section is collapsed, the section will be expanded before selecting an item
 
 The Compact display is a three-tab tabView.  The tabs are synced to the Native List:  selections are preserved when switching back and forth.
 
-![ ](https://raw.githubusercontent.com/j-crosson/cordova-plugin-split-view/main/images/collectionViewSplit.png)
+![ ](https://raw.githubusercontent.com/j-crosson/cordova-plugin-split-view-demo/main/images/collectionViewSplit.png)
 
 ### Classic Split Views
 ![ ](https://raw.githubusercontent.com/j-crosson/cordova-plugin-split-view-demo/main/images/landsc.png)
