@@ -1,17 +1,26 @@
-
 <!DOCTYPE html>
 <html>
     <head>
-        <meta name="msapplication-tap-highlight" content="no">
-        <meta name="viewport" content="user-scalable=no, initial-scale=1, width=device-width, height=device-height, viewport-fit=cover">
-        <link rel="stylesheet" href="css/compactTab.css">
+        <meta name="viewport" content="user-scalable=no, initial-scale=1, width=device-width, height=device-height">
+        <link rel="stylesheet" href="css/compactInsetAuto.css">
         <title> </title>
     </head>
     <body>
-        <div class="center">
-            <span id= "centertext" class="centertxt"> Compact </span>
+        <div id = "exitBut" class="centerexit">
+            <br><br><br><br><br>
+            <button type="button" class = "exitButton" id= "exitButton" onclick =  "cordova.plugins.SplitView.viewAction('dismiss');">Exit
+            </button>
         </div>
-        <div id = "scrolltext" style = "display:none; margin: 2em">
+
+        <br><br><br><br><br>
+        
+        <div class="centertwo">
+            <span id = "titleText" class = "twoText">
+                <br><br><br>
+                Small Title for this tab
+            </span>
+        </div>
+        <div id = "scrolltext" style = "display:none; margin: 1em">
             <br>
             <br>
             Scroll
@@ -24,24 +33,6 @@
             <br>
             <br>
             Scroll
-            <br>
-            <br>
-            Scroll
-            <br>
-            <br>
-            Scroll
-            <br>
-            <br>
-            Scroll
-            <br>
-            <br>
-            <br>
-            Scroll
-            <br>
-            <br>
-            <br>
-            Scroll
-            <br>
             <br>
             <br>
             Scroll
@@ -94,17 +85,10 @@
             <br>
             <br>
             Scroll
-            <br>
-            <br>
-            <br>
-            <br>
-            <br>
-            <br>
-            <br>
-            <br>
         </div>
         <script type="text/javascript" src="cordova.js"></script>
-        <script type="text/javascript" src="appCompact.js"></script>
+        <script type="text/javascript" src="js/compactInsetAuto.js"></script>
     </body>
 </html>
+
 

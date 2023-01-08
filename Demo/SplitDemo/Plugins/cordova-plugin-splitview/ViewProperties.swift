@@ -64,7 +64,7 @@ struct ViewProps {
                 navController.navigationBar.scrollEdgeAppearance = appearance
                 navController.navigationBar.standardAppearance = appearance
             }
-            if appearance?.background == "oldDefault" {
+            if appearance?.background == "default" {
                 let appearance = UINavigationBarAppearance()
                 appearance.configureWithDefaultBackground()
                 navController.navigationBar.scrollEdgeAppearance = appearance
@@ -189,6 +189,8 @@ struct ViewProperties: Codable {
     var primaryEdge: String?
     var presentsWithGesture: Bool?
     var showsSecondaryOnlyButton: Bool?
+    var contentInsetAdjustmentBehavior: String?
+    var hideNavigationBar: Bool?
 
     var backgroundColor: [CGFloat]?
     var backgroundColorLight: [CGFloat]?
@@ -204,6 +206,7 @@ struct ViewProperties: Codable {
     var tabBarItems: [TabBarItem]?
     var tabBar: TabBar?
     var selectedTabIndex: Int?
+    var shouldSelectTab: Bool?
 
     var topColumnForCollapsingToProposedTopColumn: String?
     var displayModeForExpandingToProposedDisplayMode: String?

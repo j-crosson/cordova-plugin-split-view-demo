@@ -2,15 +2,20 @@
 <!DOCTYPE html>
 <html>
     <head>
+        <meta name="msapplication-tap-highlight" content="no">
         <meta name="viewport" content="user-scalable=no, initial-scale=1, width=device-width, height=device-height, viewport-fit=cover">
-        <link rel="stylesheet" href="css/triple.css">
+        <link rel="stylesheet" href="css/compactInsetNever.css">
         <title> </title>
     </head>
-    <body class="bodyscroll">
-        <div class="center">
-            <span id= "centertext" class="centertxt"> Initial </span>
+    <body>
+        <div class="exitFrame">
+            <button type="button" class = "exitButton" id= "exitButton" onclick =  "cordova.plugins.SplitView.viewAction('dismiss');">Exit
+            </button>
         </div>
-        <div style = "padding-left: 5px; ">
+        <div class="center">
+            <span id= "centertext" class="centertxt"> Compact </span>
+        </div>
+        <div id = "scrolltext" style = "display:none; margin: 2em">
             <br>
             <br>
             Scroll
@@ -95,6 +100,7 @@
             Scroll
         </div>
         <script type="text/javascript" src="cordova.js"></script>
-        <script type="text/javascript" src="js/tripleSecondary.js"></script>
+        <script type="text/javascript" src="js/compactInsetNever.js"></script>
     </body>
 </html>
+

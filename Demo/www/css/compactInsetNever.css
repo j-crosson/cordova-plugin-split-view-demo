@@ -34,18 +34,19 @@ body{
     overflow: hidden;
 }
 
-.itemButton {
-    display: block;
-    width: 100%;
-    height: 3em;
-    background: var(--color-scheme-background);
-    color: var(--color-scheme-text-color);
-    text-align: center;
-    border:none;
-    font-weight:bold;
-    font: -apple-system-headline;
-    padding: 11px 28px;
-    margin-top: 5px;
+html {
+    padding: env(safe-area-inset-top, 0px) env(safe-area-inset-right, 0px) env(safe-area-inset-bottom, 0px) env(safe-area-inset-left, 0px);
+}
+
+.center {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+       
+.centertxt {
+    font-size:50px;
 }
 
 .exitButton {
@@ -54,20 +55,12 @@ body{
     font-size:2em;
     border-radius: 25px;
     border: 2px solid var(--color-scheme-backgroundPushed);
-
 }
 
-.centerexit {
-    text-align: center;
-}
-.centerradio {
-    text-align: center;
-    font-weight:bold;
-    font: -apple-system-headline;
-    font-size:2em;
-}
-
-.radiospan {
-    display: none;
+.exitFrame {
+    position: fixed;
+    top: 70%;
+    left: 50%;
+    transform: translate(-50%, -50%);
 }
 

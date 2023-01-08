@@ -1,6 +1,6 @@
 //
 //  CollectionViewController.swift
-//  
+//
 //  Created by jerry on 4/27/22.
 //
 
@@ -32,9 +32,9 @@ struct CollectionMessage: Codable {
     var select: Select?
 }
 
+@available(iOS 14.0, *)
 class SpCollectionViewController: UICollectionViewController {
 
-    @available(iOS 14.0, *)
     private(set) lazy var dataSource: UICollectionViewDiffableDataSource<Section, Item>! = nil
 
     private var navBarPrefersLargeTitles = false
@@ -48,13 +48,9 @@ class SpCollectionViewController: UICollectionViewController {
     var webViewMessage: ((String, String, SplitViewAction) -> Void)?
 
     init(properties: String?, collectionViewLayout: UICollectionViewLayout) {
-
         super.init(collectionViewLayout: collectionViewLayout)
-
-        if #available(iOS 14.0, *) {
-            if let props = properties {
-                setProperties(props: props)
-            }
+        if let props = properties {
+            setProperties(props: props)
         }
     }
 
@@ -66,7 +62,7 @@ class SpCollectionViewController: UICollectionViewController {
         super.viewDidLoad()
         clearsSelectionOnViewWillAppear = clearsSelection
         // Register cell classes, not really used yet
-        collectionView!.register(UICollectionViewCell.self, forCellWithReuseIdentifier: reuseIdentifier)
+        collectionView.register(UICollectionViewCell.self, forCellWithReuseIdentifier: reuseIdentifier)
     }
 
     override func numberOfSections(in collectionView: UICollectionView) -> Int {
@@ -114,9 +110,9 @@ class SpCollectionViewController: UICollectionViewController {
                 }
 
                 if let scrollPos = collectionMessage.select?.scrollPosition, let scrollOption = scrollPosition[scrollPos] {
-                    collectionView?.selectItem( at: IndexPath(row: row, section: section), animated: false, scrollPosition: scrollOption)
+                    collectionView.selectItem( at: IndexPath(row: row, section: section), animated: false, scrollPosition: scrollOption)
                 } else {
-                collectionView?.selectItem( at: IndexPath(row: row, section: section), animated: false, scrollPosition: [])
+                collectionView.selectItem( at: IndexPath(row: row, section: section), animated: false, scrollPosition: [])
                 }
             default:
                 return
@@ -140,7 +136,7 @@ class SpCollectionViewController: UICollectionViewController {
             navigationController?.navigationBar.prefersLargeTitles = false
             navigationItem.largeTitleDisplayMode = .never
         }
-        collectionView?.selectItem( at: IndexPath(row: initialRow, section: initialSection), animated: false, scrollPosition: [])
+        collectionView.selectItem( at: IndexPath(row: initialRow, section: initialSection), animated: false, scrollPosition: [])
     }
 
     @available(iOS 14.0, *)
@@ -174,13 +170,12 @@ class SpCollectionViewController: UICollectionViewController {
 
      func configureDataSource() {
          // Configure cells
-        if #available(iOS 14.0, *) {
-            let headerRegistration = UICollectionView.CellRegistration <UICollectionViewListCell, Item> {(cell, indexPath, item) in
-                var content = cell.defaultContentConfiguration()
-                content.text = item.title
-                cell.contentConfiguration = content
-                cell.accessories = [.outlineDisclosure()]
-            }
+         let headerRegistration = UICollectionView.CellRegistration <UICollectionViewListCell, Item> {(cell, indexPath, item) in
+            var content = cell.defaultContentConfiguration()
+            content.text = item.title
+            cell.contentConfiguration = content
+            cell.accessories = [.outlineDisclosure()]
+         }
 
          let cellRegistration = UICollectionView.CellRegistration <UICollectionViewListCell, Item> {(cell, indexPath, item) in
              var content = cell.defaultContentConfiguration()
@@ -191,7 +186,7 @@ class SpCollectionViewController: UICollectionViewController {
          }
 
          // Create datasource
-         dataSource = UICollectionViewDiffableDataSource<Section, Item>(collectionView: collectionView!) {
+         dataSource = UICollectionViewDiffableDataSource<Section, Item>(collectionView: collectionView) {
              (collectionView: UICollectionView, indexPath: IndexPath, item: Item) -> UICollectionViewCell? in
              if indexPath.item == 0 && indexPath.section != 0 {
                  return collectionView.dequeueConfiguredReusableCell(using: headerRegistration, for: indexPath, item: item)
@@ -215,7 +210,6 @@ class SpCollectionViewController: UICollectionViewController {
             }
         }
      }
- }
 
     override func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         let selectItem = CollectionMessage(id: CollectionEvents.selectedListItem.rawValue, select: CollectionMessage.Select(section: indexPath.section, row: indexPath.row))

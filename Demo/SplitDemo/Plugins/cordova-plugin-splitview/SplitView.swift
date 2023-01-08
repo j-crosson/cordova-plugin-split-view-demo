@@ -21,8 +21,16 @@ enum ViewEvents: String {
     case buttonEvent = "0"
     case tabBarEvent = "1"
     case collectionEvent = "2"
+    case barItemSelected = "3"
     //previous versions had separate right and left tap events as well as a menu-item-selected event
     //now each action has a unique ID
+}
+
+enum ScrollBarVisibility: String {
+    case showHorizontal = "showHoriz"
+    case hideHorizontal = "hideHoriz"
+    case showVertical = "showVert"
+    case hideVertical = "hideVert"
 }
 
 enum CollectionEvents: String {
@@ -84,6 +92,10 @@ enum CollectionEvents: String {
         if let childController = viewController as? SpViewControllerChild {
             if gAction == "dismiss" {
                 childController.doAction(.dismiss, "", "")
+            } else if gAction == "scrollBar" {
+                if let gData  = command.arguments[2] as? [String] {
+                    childController.doAction(.scrollBar, "", gData[0])
+                }
             } else if gAction == "setCollectionProperty" {
                 //for this release, there is only one CollectionView, the primary view
                 if let gTarget = command.arguments[1] as? [String], let gData  = command.arguments[2] as? [String] {

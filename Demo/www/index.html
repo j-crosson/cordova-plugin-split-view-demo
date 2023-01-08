@@ -7,14 +7,15 @@
         <title>Demo</title>
     </head>
      <body>
+         <div class = "wrap">
             <div  id="deviceready" style = "margin-top: 50px;">
-                <button type="button" class="itemButton" ontouchstart="this.className='pushedButton';" ontouchend="this.className='itemButton';" onclick="doViewWeb(3);">Compact Tab
+                <button type="button" class="itemButton" ontouchstart="this.className='pushedButton';" ontouchend="this.className='itemButton';" onclick="showOptions(true);">Compact Tab
                 </button>
-                <button type="button" class="itemButton" ontouchstart="this.className='pushedButton';" ontouchend="this.className='itemButton';" onclick="doViewWeb(2);">Three column
+                <button type="button" class="itemButton" ontouchstart="this.className='pushedButton';" ontouchend="this.className='itemButton';" onclick="doViewWeb('three-column');">Three column
                 </button>
-                <button type="button" class="itemButton" ontouchstart="this.className='pushedButton';" ontouchend="this.className='itemButton';" onclick="doViewWeb(1);">Two Column
+                <button type="button" class="itemButton" ontouchstart="this.className='pushedButton';" ontouchend="this.className='itemButton';" onclick="doViewWeb('two-column');">Two Column
                 </button>
-                <button type="button" class="itemButton" ontouchstart="this.className='pushedButton';" ontouchend="this.className='itemButton';" onclick="doViewWeb(4);">Native List
+                <button type="button" class="itemButton" ontouchstart="this.className='pushedButton';" ontouchend="this.className='itemButton';" onclick="doViewWeb('native-list');">Native List
                 </button>
                 <button type="button" class="itemButton" ontouchstart="this.className='pushedButton';" ontouchend="this.className='itemButton';" onclick="doClassicViewWeb();">Classic Web
                 </button>
@@ -24,12 +25,26 @@
             <div style = "text-align: center; margin-top: 10px;">
                 <span style="font-size:24px;" id= "result" class="centertxt"> </span>
             </div>
-        </div>
+            <div id= "taboptions" class="tabOptions">
+                <input  type="radio" name="options" checked value = "large-title"  /> Large Titles
+                <br>
+                <input  type="radio" name="options" value = "large-inset-auto" /> Large Titles Inset Always
+                <br>
+                <input  type="radio" name="options"  value = "hide-navbar" /> Hide Navigation Bar
+                <br>
+                <input  type="radio" name="options"  value = "small-title" /> Small Titles
+                <br>
+                <input  type="radio" name="options"  value = "exit" /> Exit
+                <br>
+                <div class="centerit">
+                    <button type="button" class="goButton" onclick="showOptions(false);selectOption();">Go!
+                    </button>
+                </div>
+            </div>
+         </div>
         <script type="text/javascript" src="cordova.js"></script>
         <script type="text/javascript" src="js/index.js"></script>
         <script type="text/javascript" src="js/classicView.js"></script>
         <script type="text/javascript" src="js/newView.js"></script>
-
     </body>
 </html>
-

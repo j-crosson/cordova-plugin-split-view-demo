@@ -31,6 +31,7 @@
         Apache Cordova Team
     </author>
     <content src="index.html" />
+    <access origin="*" />
     <allow-intent href="http://*/*" />
     <allow-intent href="https://*/*" />
     <preference name="AllowInlineMediaPlayback" value="false" />
@@ -46,6 +47,7 @@
     <preference name="PageLength" value="0" />
     <preference name="PaginationBreakingMode" value="page" />
     <preference name="PaginationMode" value="unpaginated" />
+    <preference name="AutoHideSplashScreen" value="false" />
     <feature name="SplitView">
         <param name="ios-package" value="SplitView" />
     </feature>

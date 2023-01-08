@@ -34,18 +34,8 @@ body{
     overflow: hidden;
 }
 
-.itemButton {
-    display: block;
-    width: 100%;
-    height: 3em;
-    background: var(--color-scheme-background);
-    color: var(--color-scheme-text-color);
-    text-align: center;
-    border:none;
-    font-weight:bold;
-    font: -apple-system-headline;
-    padding: 11px 28px;
-    margin-top: 5px;
+.titleText {
+    display: none;
 }
 
 .exitButton {
@@ -54,20 +44,19 @@ body{
     font-size:2em;
     border-radius: 25px;
     border: 2px solid var(--color-scheme-backgroundPushed);
-
 }
 
 .centerexit {
     text-align: center;
 }
-.centerradio {
+.centertwo {
     text-align: center;
     font-weight:bold;
     font: -apple-system-headline;
     font-size:2em;
 }
 
-.radiospan {
+.twoText {
     display: none;
 }
 

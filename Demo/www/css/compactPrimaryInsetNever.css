@@ -1,3 +1,4 @@
+
 :root {
     color-scheme: light dark;
 }
@@ -22,52 +23,54 @@
     }
 }
 
-body{
+body {
     -webkit-touch-callout: none;                /* prevent callout to copy image, etc when tap to hold */
     -webkit-text-size-adjust: none;             /* prevent webkit from resizing text to fit */
     -webkit-user-select: none;                  /* prevent copy paste, to allow, change 'none' to 'text' */
     background: var(--listcolor-scheme-background);
     font-family: system-ui, -apple-system, -apple-system-font, 'Segoe UI', 'Roboto', sans-serif;
-    height:100%;
-    width:100%;
-    margin:0px;
+    height:100vh;
+    width:100vw;
     overflow: hidden;
+    margin:0px;
 }
 
-.itemButton {
+.wrap {
+    padding: env(safe-area-inset-top, 0px) env(safe-area-inset-right, 0px) env(safe-area-inset-bottom, 0px) env(safe-area-inset-left, 0px);
+}
+
+.itemButtonChild {
     display: block;
     width: 100%;
-    height: 3em;
     background: var(--color-scheme-background);
     color: var(--color-scheme-text-color);
     text-align: center;
     border:none;
     font-weight:bold;
     font: -apple-system-headline;
-    padding: 11px 28px;
-    margin-top: 5px;
+    padding: 14px 28px;
 }
 
-.exitButton {
+.pushedButtonChild {
+    display: block;
+    width: 100%;
+    background: var(--color-scheme-backgroundPushed);
+    color: var(--color-scheme-text-color);
+    text-align: center;
+    border:none;
     font-weight:bold;
     font: -apple-system-headline;
-    font-size:2em;
-    border-radius: 25px;
-    border: 2px solid var(--color-scheme-backgroundPushed);
-
+    padding: 14px 28px;
 }
 
-.centerexit {
+.itemSelected {
+    display: block;
+    width: 100%;
+    background: var(--color-scheme-backgroundSelected);
+    color: var(--color-scheme-text-selected);
     text-align: center;
-}
-.centerradio {
-    text-align: center;
+    border:none;
     font-weight:bold;
     font: -apple-system-headline;
-    font-size:2em;
+    padding: 14px 28px;
 }
-
-.radiospan {
-    display: none;
-}
-

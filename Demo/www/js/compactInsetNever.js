@@ -51,6 +51,7 @@ function doSelected(item, forward)
             newtext = "One";
             toTop(); //sets navBar scrolledge
             document.getElementById("scrolltext").style.display = "none";
+            document.getElementById("exitButton").style.display = "block";
             document.body.style.overflowY = "hidden"
             // force bar background to no-scroll appearance
             viewProps ='{ "tabBar": {"tabBarAppearance": {"background": "transparent", "lockBackground": true} }}';
@@ -60,6 +61,7 @@ function doSelected(item, forward)
             newtext = "Two";
             toTop(); //sets navBar scrolledge
             document.getElementById("scrolltext").style.display = "none";
+            document.getElementById("exitButton").style.display = "none";
             document.body.style.overflowY = "hidden"
             // force bar background to no-scroll appearance
             viewProps ='{ "tabBar": {"tabBarAppearance": {"background": "transparent", "lockBackground": true} }}';
@@ -68,6 +70,7 @@ function doSelected(item, forward)
         case 2:
             document.body.style.overflowY = "scroll";
             document.getElementById("scrolltext").style.display = "block";
+            document.getElementById("exitButton").style.display = "none";
             viewProps ='{ "tabBar": {"tabBarAppearance": {"background": "default", "lockBackground": false} }}';
             cordova.plugins.SplitView.setProperties(viewProps,null,null);
             newtext = "Three";

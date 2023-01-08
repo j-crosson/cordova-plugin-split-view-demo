@@ -7,7 +7,7 @@
 import Foundation
 
 enum SplitViewAction {
-    case sendmessage, show, hide, setProperties, dismiss, listItemSelected, setCollectionProperty, fireCollectionEvent
+    case sendmessage, show, hide, setProperties, dismiss, listItemSelected, setCollectionProperty, fireCollectionEvent, scrollBar
 }
 
 @available(iOS 14.0, *)
@@ -134,15 +134,32 @@ enum SplitViewAction {
                     dismiss(animated: true, completion: nil)
                 //won't attempt any optimizations: this will be replaced in future versions
                 } else if $2 == SplitViewAction.listItemSelected ||  $2 == SplitViewAction.fireCollectionEvent {
+                    let actionString = "cordova.plugins.SplitView.onAction('\(ViewEvents.collectionEvent.rawValue)','\($1)');"
                     switch $0 {
                     case "primary":
-                        viewControllerMaster?.commandDelegate.evalJs( "cordova.plugins.SplitView.onAction('\(ViewEvents.collectionEvent.rawValue)','\($1)');")
+                        if viewControllerMaster?.isReady == true {
+                            viewControllerMaster?.commandDelegate.evalJs( actionString)
+                        } else {
+                            viewControllerMaster?.queuedAction = actionString
+                        }
                     case "secondary":
-                        viewControllerDetail?.commandDelegate.evalJs( "cordova.plugins.SplitView.onAction('\(ViewEvents.collectionEvent.rawValue)','\($1)');")
+                        if viewControllerDetail?.isReady == true {
+                            viewControllerDetail?.commandDelegate.evalJs( actionString)
+                        } else {
+                            viewControllerDetail?.queuedAction = actionString
+                        }
                     case "supplementary":
-                        viewControllerSupplementary?.commandDelegate.evalJs( "cordova.plugins.SplitView.onAction('\(ViewEvents.collectionEvent.rawValue)','\($1)');")
+                        if viewControllerSupplementary?.isReady == true {
+                            viewControllerSupplementary?.commandDelegate.evalJs( actionString)
+                        } else {
+                            viewControllerSupplementary?.queuedAction = actionString
+                        }
                     case "compact":
-                        compactTabBarController?.viewControllerCompact.commandDelegate.evalJs( "cordova.plugins.SplitView.onAction('\(ViewEvents.collectionEvent.rawValue)','\($1)');")
+                         if  compactTabBarController?.viewControllerCompact.isReady == true {
+                            compactTabBarController?.viewControllerCompact.commandDelegate.evalJs( actionString)
+                        } else {
+                            compactTabBarController?.viewControllerCompact.queuedAction = actionString
+                        }
                     default:
                         return
                     }

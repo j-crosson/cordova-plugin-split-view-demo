@@ -1,0 +1,42 @@
+:root {
+    color-scheme: light dark;
+}
+@media (prefers-color-scheme: light) {
+    :root {
+        --color-scheme-background: white;
+        --color-scheme-backgroundPushed: darkgray;
+        --color-scheme-backgroundSelected: blue;
+        --color-scheme-text-color: black;
+        --color-scheme-text-selected: white;
+        --listcolor-scheme-background: #E4E4E4;
+    }
+}
+@media (prefers-color-scheme: dark) {
+    :root {
+      --color-scheme-background: black;
+      --color-scheme-backgroundPushed: darkgray;
+      --color-scheme-backgroundSelected: blue;
+      --color-scheme-text-color: white;
+      --color-scheme-text-selected: white;
+      --listcolor-scheme-background: #1E1E1E;
+    }
+}
+
+body {
+    -webkit-touch-callout: none;
+    -webkit-text-size-adjust: none;
+    -webkit-user-select: none;
+    background: var(--listcolor-scheme-background);
+    font-family: system-ui, -apple-system, -apple-system-font, 'Segoe UI', 'Roboto', sans-serif;
+    height:100%;
+    width: 100%;
+    overflow: scroll;
+    margin:0px;
+}
+
+.centertxt {
+    font-size:50px;
+}
+.center {
+    text-align:center;
+}

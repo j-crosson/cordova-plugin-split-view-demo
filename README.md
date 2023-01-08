@@ -12,6 +12,11 @@ The demo shows both new and classic view options in a modal view, supporting bot
 There is an option to make the split view a root view but this does not apply to the classic split view. An alternative option is to make the modal view full screen.  This option is used for the post-iOS14 demos. 
 To run the demo that simulates a root split view in classic split view, rename “indexRoot.html” to “index.html”. In "index.js", un-comment one of the lines indicated in the “root demo” comment.
 
+## New in 2.4
+* New inset options
+* Hide-Navigation-Bar option
+* New TabBar options
+
 ## New in 2.3
 * Collection View List (replaces classic-view TableView option)
 
@@ -39,9 +44,9 @@ The first four options are for apps targeting iOS14 and above; the two "Classic"
 
 ### Compact Tab
 
-There are two size classes: Regular, which you would find on a large device such as an iPad or a large iPhone in landscape, and Compact which you would find on smaller device or an iPad running multiple apps in a split screen. 
+There are two size classes: Regular and Compact, which apply to width and height and depend on device size and orientation.  Horizontally Regular you would find on a large device such as an iPad or a large iPhone in landscape, and Horizontally Compact you would find on a smaller device in portrait and landscape, or an iPad running multiple apps in a split screen.  
 
-The plug-in has the option of using a TabView for the Compact Size. The view will dynamically switch to/from a split view as the Size Class changes.  For example, when an iPhone 11 is rotated from portrait to landscape or when a second app is launched on an iPad. 
+The plug-in has the option of using a TabView for the Compact Size. The view will dynamically switch to/from a split view as the size class changes.  For example, when a large iPhone is rotated from portrait to landscape or when a second app shares the screen on an iPad. 
 
 
 **Regular size**
@@ -51,6 +56,43 @@ The plug-in has the option of using a TabView for the Compact Size. The view wil
 **Compact size**
 
 ![ ](https://raw.githubusercontent.com/j-crosson/cordova-plugin-split-view/main/images/compactiPad.png)
+
+
+### Compact Tab Demo
+
+
+There are four Compact Tab Demos:
+* Large Titles 
+* Large Titles Inset Always 
+* Hide Navigation Bar 
+* Small Titles 
+
+**Large Titles**
+ 
+ Large Navigation Bar titles for Regular, both large and small titles for Compact.
+ 
+ Insets:  contentInsetAdjustmentBehavior = "never"  (viewport-fit=cover.)
+ 
+ 
+**Large Titles Inset Alwayss** 
+
+ Large Navigation Bar titles for Regular, both large and small titles for Compact.
+ 
+ Insets: contentInsetAdjustmentBehavior = "always" 
+ 
+ Compare the scroll behavior of this example with "Large Titles"
+
+
+**Hide Navigation Bar**
+ 
+ No Bars
+ 
+
+**Small Titles**
+
+ Small Navigation Bar titles for Regular and Compact.
+
+
 
 ### Three Column
 
@@ -69,7 +111,7 @@ Demonstrates a split view with a  Primary and Secondary column
 
 The UICollectionView List replaces the UITableView for apps targeting iOS14 and above.
 
-There are two size classes: Regular, which you would find on a large device such as an iPad or a large iPhone in landscape, and Compact which you would find on smaller device or an iPad running multiple apps in a split screen. 
+There are two size classes: Regular and Compact, which apply to width and height and depend on device size and orientation.  Horizontally Regular you would find on a large device such as an iPad or a large iPhone in landscape, and Horizontally Compact you would find on a smaller device in portrait and landscape, or an iPad running multiple apps in a split screen.  
 
 **Regular Size**
 

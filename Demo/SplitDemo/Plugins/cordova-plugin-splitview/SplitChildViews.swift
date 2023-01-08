@@ -30,16 +30,22 @@ private let sysItem: [String: UIBarButtonItem.SystemItem] = ["done": .done,
                                                              "undo": .undo,
                                                              "redo": .redo]
 
+public let insetAdjustmentBehavior: [String: UIScrollView.ContentInsetAdjustmentBehavior] = ["never": .never,
+                                                                                              "always": .always,
+                                                                                              "auto": .automatic]
+
 class SpViewControllerChild: CDVViewController, UIScrollViewDelegate {
     var initialBackgroundColor: UIColor?
     var isReady = false //set when webview wants messages
     var queuedMessage = "" //last message sent before device ready/ init
+    var queuedAction = "" //last action sent before device ready/ init
     var webViewMessage: ((String, String, SplitViewAction) -> Void)?
     var childProperties = ViewProps()
     var navBarPrefersLargeTitles = false
     var horizScrollBarInvisible = false
     var vertScrollBarInvisible = false
     var preventHorizScroll = false
+    var contentInsetAdjustmentBehavior = UIScrollView.ContentInsetAdjustmentBehavior.never
 
     init(backgroundColor: UIColor?, page: String) {
         super.init(nibName: nil, bundle: nil)
@@ -72,7 +78,9 @@ class SpViewControllerChild: CDVViewController, UIScrollViewDelegate {
 
        let wkWebView = webViewEngine?.engineWebView as? WKWebView
        if let scrollVw = wkWebView?.scrollView {
-           scrollVw.contentInsetAdjustmentBehavior =  UIScrollView.ContentInsetAdjustmentBehavior.never
+           scrollVw.contentInsetAdjustmentBehavior = contentInsetAdjustmentBehavior
+           //No longer force this. Also set by user-specified Meta Tag (viewport-fit=cover) to ".never"
+           //but won't be set initially which can be an issue, hence the option here
 
            // fixes scrolledge,large titles, etc.
            scrollVw.delegate = self
@@ -88,12 +96,11 @@ class SpViewControllerChild: CDVViewController, UIScrollViewDelegate {
     //there are non-rotating cases where we don't want the sizing to happen
     //but handling those cases is for a future version
     //or if we're lucky the need for this workaround will go away
+    //12/2/22 -- removing animation improved non-rotating cases
     override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
         super.viewWillTransition(to: size, with: coordinator)
         let navCtl = self.navigationController
-           coordinator.animate(alongsideTransition: { _ in
-               navCtl?.navigationBar.sizeToFit()
-           }, completion: nil)
+        coordinator.animate(alongsideTransition: nil, completion: { _ in  navCtl?.navigationBar.sizeToFit() })
        }
 
     override func viewDidAppear(_ animated: Bool) {
@@ -108,26 +115,12 @@ class SpViewControllerChild: CDVViewController, UIScrollViewDelegate {
 
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
         if preventHorizScroll {
-           if scrollView.contentOffset.x != 0 {
-               scrollView.contentOffset.x = 0
-           }
+            scrollView.contentOffset.x = -scrollView.adjustedContentInset.left
         }
-        let bottomEdge = scrollView.contentOffset.y + scrollView.frame.size.height
-        let yOff = scrollView.contentOffset.y
-        if yOff <= 0 {
-            // The following two lines handle an edge condition or two, mainly Status Bar scroll-to-top
-            // which would end up with a bad offset (very noticible extra top space)
-            // Since we handle DidScroll, we aren't handling
-            //
-            //     func scrollViewDidEndDragging(_ scrollView: UIScrollView,willDecelerate decelerate: Bool) {
-            //     if !decelerate {
-            //
-            //     func scrollViewDidEndDecelerating(_ scrollView: UIScrollView) {
+        if scrollView.contentOffset.y <= 0 {
             if !( scrollView.isDragging || scrollView.isDecelerating) {
-           scrollView.setContentOffset(scrollView.contentOffset, animated: false)
+                    self.navigationController?.navigationBar.sizeToFit()
             }
-            let navC = self.navigationController
-            navC?.navigationBar.sizeToFit()
         }
     }
 
@@ -141,11 +134,28 @@ class SpViewControllerChild: CDVViewController, UIScrollViewDelegate {
      }
 
     func doAction(_ splitAction: SplitViewAction, _ arg0: String, _ arg1: String ) {
-        webViewMessage?(arg0, arg1, splitAction)
+        if splitAction == SplitViewAction.scrollBar {
+            let wkWebView = webViewEngine?.engineWebView as? WKWebView
+            if let scrollVw = wkWebView?.scrollView {
+                switch arg1 {
+                case "hideVert":
+                    scrollVw.showsVerticalScrollIndicator = false
+                case "showVert":
+                    scrollVw.showsVerticalScrollIndicator = true
+                case "hideHoriz":
+                    scrollVw.showsHorizontalScrollIndicator = false
+                case "showHoriz":
+                    scrollVw.showsHorizontalScrollIndicator = true
+                default:
+                    return
+                }
+            }
+        } else {
+            webViewMessage?(arg0, arg1, splitAction)
+        }
     }
 
     func getMsg(msg: String) {
-
         if isReady {
             commandDelegate.evalJs("cordova.plugins.SplitView.onMessage('\(msg)');")
         } else {
@@ -176,6 +186,10 @@ class SpViewControllerChild: CDVViewController, UIScrollViewDelegate {
                           isRight: false,
                           leftItemsSuppBack: childProperties.viewProps.barButtonLeft?.leftItemsSupplementBackButton ?? false)
             }
+            if let contentInset =  childProperties.viewProps.contentInsetAdjustmentBehavior {
+                contentInsetAdjustmentBehavior =? insetAdjustmentBehavior[contentInset]
+            }
+            navigationController?.isNavigationBarHidden = childProperties.viewProps.hideNavigationBar ?? false
             navBarPrefersLargeTitles = childProperties.setNavBarAppearance(navController,
                                                                            appearance: childProperties.viewProps.navBarAppearance)
         }
@@ -282,6 +296,9 @@ class SpViewControllerChild: CDVViewController, UIScrollViewDelegate {
         isReady = true
         if queuedMessage != "" {
             commandDelegate.evalJs("cordova.plugins.SplitView.onMessage('\(queuedMessage)');")
+        }
+        if queuedAction != "" {
+            commandDelegate.evalJs(queuedAction)
         }
     }
 }

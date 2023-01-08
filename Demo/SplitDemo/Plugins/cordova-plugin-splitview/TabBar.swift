@@ -19,6 +19,9 @@ class SpViewControllerCompact: SpViewControllerChild {
             return
         }
         if parentTabBar.compactProperties.decodeProperties(json: props) {
+            if let contentInset = parentTabBar.compactProperties.viewProps.contentInsetAdjustmentBehavior {
+                contentInsetAdjustmentBehavior =? insetAdjustmentBehavior[contentInset]
+            }
             parentTabBar.setTabViewProperties()
         }
     }
@@ -29,6 +32,10 @@ class SpViewControllerCompact: SpViewControllerChild {
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        let wkWebView = webViewEngine?.engineWebView as? WKWebView
+        if let scrollVw = wkWebView?.scrollView {
+            scrollVw.contentInsetAdjustmentBehavior =  contentInsetAdjustmentBehavior
+        }
     }
 
     // Force large navBar titles to lay out correctly on
@@ -40,14 +47,13 @@ class SpViewControllerCompact: SpViewControllerChild {
     // force ScrollEdgeAppearance and NavBar size
 
     override func viewDidAppear(_ animated: Bool) {
-          super.viewDidAppear(animated)
+        super.viewDidAppear(animated)
         scrollEdge  = ScrollEdgeState.unset
         // force ScrollEdgeAppearance after switching from regular view
         let wkWebView = webViewEngine?.engineWebView as? WKWebView
         if let scrollVw = wkWebView?.scrollView {
-            let bottomEdge = scrollVw.contentOffset.y + scrollVw.frame.size.height
-            setBarToScrollEdgeAppearance(bottomEdge >= scrollVw.contentSize.height ? ScrollEdgeState.isEdge : ScrollEdgeState.notEdge)
-            }
+            adjustBarScrollEdgeAppearance(scrollVw)
+        }
         let navC = self.navigationController
         navC?.navigationBar.sizeToFit()
     }
@@ -60,8 +66,7 @@ class SpViewControllerCompact: SpViewControllerChild {
         let wkWebView = webViewEngine?.engineWebView as? WKWebView
         coordinator.animate(alongsideTransition: { _ in
             if let scrollVw = wkWebView?.scrollView {
-                let bottomEdge = scrollVw.contentOffset.y + scrollVw.frame.size.height
-                self.setBarToScrollEdgeAppearance(bottomEdge >= scrollVw.contentSize.height ? ScrollEdgeState.isEdge : ScrollEdgeState.notEdge)
+                self.adjustBarScrollEdgeAppearance(scrollVw)
             }
         }, completion: nil)
     }
@@ -70,51 +75,49 @@ class SpViewControllerCompact: SpViewControllerChild {
     //    Workaround for current behavior of TabBars
     //
     //    Also workaround for large-title navBars
+
     override func scrollViewDidScroll(_ scrollView: UIScrollView) {
         if preventHorizScroll {
-           if scrollView.contentOffset.x != 0 {
-               scrollView.contentOffset.x = 0
-           }
+            scrollView.contentOffset.x = -scrollView.adjustedContentInset.left
         }
-        let bottomEdge = scrollView.contentOffset.y + scrollView.frame.size.height
-        let yOff = scrollView.contentOffset.y
-        if yOff <= 0 {
-            // The following two lines handle an edge condition or two, mainly Status Bar scroll-to-top
-            // which would end up with a bad offset (very noticible extra top space)
-            // Since we handle DidScroll, we aren't handling
-            //
-            //     func scrollViewDidEndDragging(_ scrollView: UIScrollView,willDecelerate decelerate: Bool) {
-            //     if !decelerate {
-            //
-            //     func scrollViewDidEndDecelerating(_ scrollView: UIScrollView) {
+        if scrollView.contentOffset.y <= 0 {
             if !( scrollView.isDragging || scrollView.isDecelerating) {
-           scrollView.setContentOffset(scrollView.contentOffset, animated: false)
+                self.navigationController?.navigationBar.sizeToFit()
             }
-            let navC = self.navigationController
-            navC?.navigationBar.sizeToFit()
         }
-        setBarToScrollEdgeAppearance(bottomEdge >= scrollView.contentSize.height ? ScrollEdgeState.isEdge : ScrollEdgeState.notEdge)
+        adjustBarScrollEdgeAppearance(scrollView)
     }
 
-    func setBarToScrollEdgeAppearance(_ isEdge: ScrollEdgeState) {
+    func adjustBarScrollEdgeAppearance(_ scrollView: UIScrollView) {
         if #available(iOS 15.0, *) {
-            if scrollEdge == isEdge {
+            // the "never" case requires forcing edge behavior.  Otherwise, things work as expected
+            // and require no intervention
+            if scrollView.contentInsetAdjustmentBehavior !=  UIScrollView.ContentInsetAdjustmentBehavior.never {
                 return
             }
+
+            let edgeState = (scrollView.contentOffset.y + scrollView.frame.size.height) >= scrollView.contentSize.height ? ScrollEdgeState.isEdge : ScrollEdgeState.notEdge
+            //scrollView.frame.size.height >= scrollView.contentSize.height - yOff + scrollView.adjustedContentInset.bottom
+
+            if scrollEdge == edgeState {
+                return
+            }
+            scrollEdge = edgeState
+
             if let parentTabBar = tabBarController as? TabBarController2 {
                 if parentTabBar.lockBackground {
                     return
                 }
             }
+
             let appearance = UITabBarAppearance()
-            if isEdge == ScrollEdgeState.isEdge {
+            if scrollEdge == ScrollEdgeState.isEdge {
                 appearance.configureWithTransparentBackground()
             } else {
                 appearance.configureWithDefaultBackground()
             }
             tabBarController?.tabBar.standardAppearance = appearance
             tabBarController?.tabBar.scrollEdgeAppearance = appearance
-            scrollEdge = isEdge
         }
     }
 }
@@ -125,6 +128,7 @@ class TabBarController2: UITabBarController, UITabBarControllerDelegate {
     var usesCompactViewController = true  //only option for this version
     var compactProperties = ViewProps()
     var lockBackground = false
+    var shouldSelect = true
 
     // should be combined -- but controller array is needed, so...
     var tabViewControllers: [UINavigationController] = []
@@ -137,12 +141,17 @@ class TabBarController2: UITabBarController, UITabBarControllerDelegate {
             }
         }
 
+        //properties will be handled differently in future versions.
+        //These changes will be part of a major expansion of compact view
         viewControllerCompact = SpViewControllerCompact(backgroundColor: compactProperties.backgroundColor,
                                                         page: compactProperties.viewProps.compactURL ?? PluginDefaults.compactURL)
         super.init(nibName: nil, bundle: nil)
         viewControllerCompact.setScrollProperties(horizBarInvisible: compactProperties.viewProps.horizScrollBarInvisible ?? false,
                                                   vertBarInvisible: compactProperties.viewProps.vertScrollBarInvisible ?? false,
                                                   noHorizScroll: compactProperties.viewProps.preventHorizScroll ?? false)
+        if let contentInset =  compactProperties.viewProps.contentInsetAdjustmentBehavior {
+            viewControllerCompact.contentInsetAdjustmentBehavior =? insetAdjustmentBehavior[contentInset]
+        }
     }
 
     required init?(coder: NSCoder) {
@@ -163,6 +172,7 @@ class TabBarController2: UITabBarController, UITabBarControllerDelegate {
         if let back = compactProperties.viewProps.tabBar?.tabBarAppearance?.lockBackground {
             lockBackground = back
         }
+        shouldSelect =? compactProperties.viewProps.shouldSelectTab
     }
 
     func setTabBarAppearance( appearance: String) {
@@ -182,8 +192,9 @@ class TabBarController2: UITabBarController, UITabBarControllerDelegate {
             if appearance == "default" {
                 let appearance = UITabBarAppearance()
                 appearance.configureWithDefaultBackground()
-                tabBar.scrollEdgeAppearance = appearance
                 tabBar.standardAppearance = appearance
+                appearance.configureWithTransparentBackground()
+                tabBar.scrollEdgeAppearance = appearance
             }
         }
     }
@@ -207,17 +218,36 @@ class TabBarController2: UITabBarController, UITabBarControllerDelegate {
         }
     }
 
-    //
-    // if we move the view while scrolling bad things happen:
-    // the main one seems to be the failure of programmatic scrolling in the web view
-    // so we stop scrolling and internally fire a select after a timeout.
-    // Not thrilled with the timout, but it seems to work and will stay
-    // until something better appears
     func tabBarController(_ tabBarController: UITabBarController,
                           shouldSelect viewController: UIViewController) -> Bool {
         guard let index = viewControllers?.firstIndex(of: viewController) else {
             return false
         }
+
+        if !shouldSelect {
+            viewControllerCompact.eventHandle(ViewEvents.barItemSelected, data: String(viewController.tabBarItem.tag))
+            return false
+        }
+
+        //A user can select a tab before "isReady".  Since there is such a small window for this
+        //on a real device (is noticable on simulator), we just prevent selection until the webview is ready.
+        //A more sophisticated approach would be letting "isReady" make a queued select.
+        if viewControllerCompact.isReady == false {
+            return false
+        }
+
+        if #available(iOS 16.0, *) {
+            return true
+        }
+
+        // In previous versions of iOS
+        // if we move the view while scrolling bad things happen:
+        // the main one seems to be the failure of programmatic scrolling in the web view
+        // so we stop scrolling and internally fire a select after a timeout.
+        // Not thrilled with the timout, but it seems to work
+        //
+        // Can't reproduce the issue in newer versions of iOS, so this workaround only
+        // applies to older versions.
 
         let wkWebView = viewControllerCompact.webViewEngine?.engineWebView as? WKWebView
         if let sview = wkWebView?.scrollView {
@@ -233,7 +263,7 @@ class TabBarController2: UITabBarController, UITabBarControllerDelegate {
             return false
             }
         }
-     return true
+        return true
     }
 
     func tabBarController(_ tabBarController: UITabBarController, didSelect viewController: UIViewController) {
@@ -245,50 +275,60 @@ class TabBarController2: UITabBarController, UITabBarControllerDelegate {
         }
     }
 
-  override func viewDidLoad() {
-    super.viewDidLoad()
-    self.delegate = self
-    setTabViewProperties()
-    if #available(iOS 14.0, *) {
-        let sysItem: [String: UITabBarItem.SystemItem] = ["bookmarks": .bookmarks,
-                                                          "contacts": .contacts,
-                                                          "downloads": .downloads,
-                                                          "favorites": .favorites,
-                                                          "featured": .featured,
-                                                          "history": .history,
-                                                          "more": .more,
-                                                          "mostRecent": .mostRecent,
-                                                          "mostViewed": .mostViewed,
-                                                          "recents": .recents,
-                                                          "search": .search,
-                                                          "topRated": .topRated]
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        self.delegate = self
+        setTabViewProperties()
+        if #available(iOS 14.0, *) {
+            let sysItem: [String: UITabBarItem.SystemItem] = ["bookmarks": .bookmarks,
+                                                              "contacts": .contacts,
+                                                              "downloads": .downloads,
+                                                              "favorites": .favorites,
+                                                              "featured": .featured,
+                                                              "history": .history,
+                                                              "more": .more,
+                                                              "mostRecent": .mostRecent,
+                                                              "mostViewed": .mostViewed,
+                                                              "recents": .recents,
+                                                              "search": .search,
+                                                              "topRated": .topRated]
 
-    if let barItems = compactProperties.viewProps.tabBarItems {
-        tabViewControllers = barItems.map {
-            let viewController = UINavigationController()
-            viewController.isNavigationBarHidden = $0.hideNavBar ?? true
-            if $0.systemItem != nil {
-                if let systItem = sysItem[$0.systemItem ?? ""] {
-                    viewController.tabBarItem = UITabBarItem(tabBarSystemItem: systItem, tag: $0.tag ?? 0)
-                }
-            } else {
-                viewController.tabBarItem = UITabBarItem(title: $0.title,
-                                                         image: newImage(image: $0.image),
-                                                         tag: $0.tag ?? 0)
+            if #available(iOS 15.0, *) {
+                let appearance = UITabBarAppearance()
+                let appearance1 = UITabBarAppearance()
+                appearance.configureWithDefaultBackground()
+                appearance1.configureWithTransparentBackground()
+                tabBarController?.tabBar.standardAppearance = appearance
+                tabBarController?.tabBar.scrollEdgeAppearance = appearance1
             }
-            viewController.navigationBar.prefersLargeTitles = compactProperties.setNavBarAppearance(viewController,
-                                                                                                    appearance: $0.navBar?.appearance)
-            navBarTitles.append( $0.navBar?.title ?? "")
-            return viewController
+
+            if let barItems = compactProperties.viewProps.tabBarItems {
+                tabViewControllers = barItems.map {
+                    let viewController = UINavigationController()
+                    viewController.isNavigationBarHidden = $0.hideNavBar ?? true
+
+                    if $0.systemItem != nil {
+                        if let systItem = sysItem[$0.systemItem ?? ""] {
+                            viewController.tabBarItem = UITabBarItem(tabBarSystemItem: systItem, tag: $0.tag ?? 0)
+                        }
+                    } else {
+                        viewController.tabBarItem = UITabBarItem(title: $0.title,
+                                                                 image: newImage(image: $0.image),
+                                                                 tag: $0.tag ?? 0)
+                    }
+                    viewController.navigationBar.prefersLargeTitles = compactProperties.setNavBarAppearance(viewController,
+                                                                                                            appearance: $0.navBar?.appearance)
+                    navBarTitles.append( $0.navBar?.title ?? "")
+                    return viewController
+                }
             }
         }
-    }
 
-    let newV: [UIViewController] = [viewControllerCompact]
-    if let  cvc = tabViewControllers[0] as? UINavigationController {
-        cvc.setViewControllers(newV, animated: false)
-        cvc.navigationBar.topItem?.title = navBarTitles[0]
+        let newV: [UIViewController] = [viewControllerCompact]
+        if let  cvc = tabViewControllers[0] as? UINavigationController {
+            cvc.setViewControllers(newV, animated: false)
+            cvc.navigationBar.topItem?.title = navBarTitles[0]
+        }
+        setViewControllers(tabViewControllers, animated: false)
     }
-  setViewControllers(tabViewControllers, animated: false)
-      }
 }
