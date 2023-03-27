@@ -1,9 +1,20 @@
 // var isDarkMode = window.matchMedia('(prefers-color-scheme:dark)');
 
+
+function noMove(e) {
+    e.preventDefault();
+}
+
 function showOptions(show)
 {
+    window.scrollTo(0,0);
     document.getElementById("deviceready").style.display = show ? "none" : "block";
     document.getElementById("taboptions").style.display = show ? "block" : "none";
+    if (show) {
+        document.addEventListener("touchmove",noMove, { passive: false });
+    } else {
+        document.removeEventListener('touchmove', noMove);
+    }
 }
 
 function selectOption()
@@ -32,7 +43,7 @@ function doViewWeb(option)
        let viewPropSup;
 
        //
-       // see JSON.js for formatted JSON
+       // see View JSON demo to view demo JSON
        //
        switch (option)
        {
@@ -99,6 +110,13 @@ function doViewWeb(option)
                break;
          case "exit":
                return;
+         case "show-JSON": //display JSON, double column
+               viewPropJSON = '{"fullscreen":true,"primaryTitle":"Demo", "primaryURL":"doublePrimary.html", "viewConfig": {"primary": "collectionList" }, "secondaryTitle":"JSON", "secondaryURL":"showJSON.html", "style":"doubleColumn", "preferredSplitBehavior":"automatic", "usesCompact":false,"topColumnForCollapsingToProposedTopColumn":"primary", "preferredDisplayMode":"oneBesideSecondary", "primaryEdge":"leading","backgroundColor":[' + redBackground+','+ greenBackground+ ',' + blueBackground+ ',' + '1]}';
+               viewPropPrimary ='{ "navBarAppearance": {"prefersLargeTitles":true}, "views": {"primaryCollection": { "config": {"initialSection": 0, "initialRow": 0, "messageTargets": ["compact", "secondary"]}, "sections":[{"listItems":[]},{"header": "Two Columns", "listItems":[{"listImage": {"type": "symbol","name": "doc"},"listText": "Split View" },{"listImage": {"type": "symbol","name": "doc"},"listText": "Primary" },{"listImage": {"type": "symbol","name": "doc"},"listText": "Secondary" }]},{"header": "Three Columns", "listItems":[{"listImage": {"type": "symbol","name": "doc"},"listText": "Split View" },{"listImage": {"type": "symbol","name": "doc"},"listText": "Primary" },{"listImage": {"type": "symbol","name": "doc"},"listText": "Secondary" }]},{"header": "Native List", "listItems":[{"listImage": {"type": "symbol","name": "doc"},"listText": "Split View" },{"listImage": {"type": "symbol","name": "doc"},"listText": "Primary" },{"listImage": {"type": "symbol","name": "doc"},"listText": "Secondary" },{"listImage": {"type": "symbol","name": "doc"},"listText": "Compact" }]},{"header": "Compact Large Title", "listItems":[{"listImage": {"type": "symbol","name": "doc"},"listText": "Split View" },{"listImage": {"type": "symbol","name": "doc"},"listText": "Primary" },{"listImage": {"type": "symbol","name": "doc"},"listText": "Secondary" },{"listImage": {"type": "symbol","name": "doc"},"listText": "Compact" }]},{"header": "Large Inset Auto", "listItems":[{"listImage": {"type": "symbol","name": "doc"},"listText": "Split View" },{"listImage": {"type": "symbol","name": "doc"},"listText": "Primary" },{"listImage": {"type": "symbol","name": "doc"},"listText": "Secondary" },{"listImage": {"type": "symbol","name": "doc"},"listText": "Compact" }]},{"header": "Compact Hide NavBar", "listItems":[{"listImage": {"type": "symbol","name": "doc"},"listText": "Split View" },{"listImage": {"type": "symbol","name": "doc"},"listText": "Primary" },{"listImage": {"type": "symbol","name": "doc"},"listText": "Secondary" },{"listImage": {"type": "symbol","name": "doc"},"listText": "Compact" }]},{"header": "Compact Small Title", "listItems":[{"listImage": {"type": "symbol","name": "doc"},"listText": "Split View" },{"listImage": {"type": "symbol","name": "doc"},"listText": "Primary" },{"listImage": {"type": "symbol","name": "doc"},"listText": "Secondary" },{"listImage": {"type": "symbol","name": "doc"},"listText": "Compact" }]}  ]}}}';
+               viewPropSecondary='{"navBarAppearance": {"prefersLargeTitles":false}, "barButtonRight": {"type": "image", "menuType": "menu", "identifier": ".0", "image": {"type": "symbol","name": "ellipsis.circle","symbolConfig":[{"type":"scale","value":"large"}]}, "menuElements": [{"title":"Expand All","identifier": "1","menuImage": {"type": "symbol","name": "arrow.up","symbolConfig":[{"type":"weight","value":"bold"}]}},{"title":"Collapse All","identifier": "2","menuImage": {"type": "symbol","name": "arrow.down","symbolConfig":[{"type":"weight","value":"bold"}]}},{"title":"Exit","identifier": "5","menuImage": {"type": "symbol","name": "flame.fill"}, "attributes": ["destructive"]} ]}}';
+               viewPropCompact = null;
+               break;
+
        }
   cordova.plugins.SplitView.showView(viewPropJSON,viewPropPrimary,viewPropSecondary,viewPropSup,viewPropCompact,null,null);
    }

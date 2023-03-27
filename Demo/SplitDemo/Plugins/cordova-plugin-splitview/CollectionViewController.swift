@@ -16,6 +16,8 @@ func createLayout() -> UICollectionViewLayout {
 }
 
 private let reuseIdentifier = "Cell"
+@available(iOS 14.0, *)
+weak var collectionCtl: SpCollectionViewController?
 
 @available(iOS 14.0, *)
 private var childProperties = ViewProps()
@@ -62,7 +64,7 @@ class SpCollectionViewController: UICollectionViewController {
         super.viewDidLoad()
         clearsSelectionOnViewWillAppear = clearsSelection
         // Register cell classes, not really used yet
-        collectionView.register(UICollectionViewCell.self, forCellWithReuseIdentifier: reuseIdentifier)
+        collectionView?.register(UICollectionViewCell.self, forCellWithReuseIdentifier: reuseIdentifier)
     }
 
     override func numberOfSections(in collectionView: UICollectionView) -> Int {
@@ -110,9 +112,9 @@ class SpCollectionViewController: UICollectionViewController {
                 }
 
                 if let scrollPos = collectionMessage.select?.scrollPosition, let scrollOption = scrollPosition[scrollPos] {
-                    collectionView.selectItem( at: IndexPath(row: row, section: section), animated: false, scrollPosition: scrollOption)
+                    collectionView?.selectItem( at: IndexPath(row: row, section: section), animated: false, scrollPosition: scrollOption)
                 } else {
-                collectionView.selectItem( at: IndexPath(row: row, section: section), animated: false, scrollPosition: [])
+                    collectionView?.selectItem( at: IndexPath(row: row, section: section), animated: false, scrollPosition: [])
                 }
             default:
                 return
@@ -136,7 +138,7 @@ class SpCollectionViewController: UICollectionViewController {
             navigationController?.navigationBar.prefersLargeTitles = false
             navigationItem.largeTitleDisplayMode = .never
         }
-        collectionView.selectItem( at: IndexPath(row: initialRow, section: initialSection), animated: false, scrollPosition: [])
+        collectionView?.selectItem( at: IndexPath(row: initialRow, section: initialSection), animated: false, scrollPosition: [])
     }
 
     @available(iOS 14.0, *)
@@ -169,6 +171,9 @@ class SpCollectionViewController: UICollectionViewController {
     }
 
      func configureDataSource() {
+         collectionCtl = self
+         let isCompact = UITraitCollection.current.horizontalSizeClass == .compact
+
          // Configure cells
          let headerRegistration = UICollectionView.CellRegistration <UICollectionViewListCell, Item> {(cell, indexPath, item) in
             var content = cell.defaultContentConfiguration()
@@ -177,16 +182,22 @@ class SpCollectionViewController: UICollectionViewController {
             cell.accessories = [.outlineDisclosure()]
          }
 
-         let cellRegistration = UICollectionView.CellRegistration <UICollectionViewListCell, Item> {(cell, indexPath, item) in
+         let cellRegistration = UICollectionView.CellRegistration <PluginListCell, Item> {(cell, indexPath, item) in
              var content = cell.defaultContentConfiguration()
              content.text = item.title
              content.image = item.image
              cell.contentConfiguration = content
-             cell.accessories = []
+             //our best guess what the split view--which hasn't done layout yet--will be
+             //usually right but if not will change after loading
+             if isCompact {
+                 cell.accessories = [.disclosureIndicator()]
+             } else {
+                 cell.accessories = []
+             }
          }
 
          // Create datasource
-         dataSource = UICollectionViewDiffableDataSource<Section, Item>(collectionView: collectionView) {
+         dataSource = UICollectionViewDiffableDataSource<Section, Item>(collectionView: collectionView!) {
              (collectionView: UICollectionView, indexPath: IndexPath, item: Item) -> UICollectionViewCell? in
              if indexPath.item == 0 && indexPath.section != 0 {
                  return collectionView.dequeueConfiguredReusableCell(using: headerRegistration, for: indexPath, item: item)
@@ -248,5 +259,25 @@ class Section: Hashable {
 
     static func == (lhs: Section, rhs: Section) -> Bool {
          lhs.id == rhs.id
+    }
+}
+
+@available(iOS 14.0, *)
+class PluginListCell: UICollectionViewListCell {
+
+    override func updateConfiguration(using state: UICellConfigurationState) {
+        
+        var splitHorizSize: UIUserInterfaceSizeClass {
+              get {
+                  return  collectionCtl?.splitViewController?.traitCollection.horizontalSizeClass ?? .unspecified
+              }
+          }
+
+        if splitHorizSize == .compact {
+            accessories = [.disclosureIndicator()]
+        } else if splitHorizSize == .regular{
+            accessories = []
+        }
+    super.updateConfiguration(using:state)
     }
 }

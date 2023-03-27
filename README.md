@@ -40,7 +40,7 @@ The Tab Bar System-Item option can be demoed by switching out commented-out code
 ### Demos
 ![ ](https://raw.githubusercontent.com/j-crosson/cordova-plugin-split-view-demo/main/images/demoselections.png)
 
-The first four options are for apps targeting iOS14 and above; the two "Classic" options are for apps targeting earlier versions of iOS.
+The first five options are for apps targeting iOS14 and above; the two "Classic" options are for apps targeting earlier versions of iOS.
 
 ### Compact Tab
 
@@ -133,6 +133,11 @@ If a section is collapsed, the section will be expanded before selecting an item
 The Compact display is a three-tab tabView.  The tabs are synced to the Native List:  selections are preserved when switching back and forth.
 
 ![ ](https://raw.githubusercontent.com/j-crosson/cordova-plugin-split-view-demo/main/images/collectionViewSplit.png)
+
+
+**View JSON**
+
+Displays Demo App JSON in a more readable form than Demo source code.  This demo option uses some features that will appear in the next version of the plugin in somewhat different form:  this demo option isn't supported by the current plugin.   
 
 ### Classic Split Views
 ![ ](https://raw.githubusercontent.com/j-crosson/cordova-plugin-split-view-demo/main/images/landsc.png)

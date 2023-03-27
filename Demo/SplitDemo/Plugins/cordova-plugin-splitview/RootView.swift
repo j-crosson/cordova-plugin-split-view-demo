@@ -73,14 +73,16 @@ enum SplitViewAction {
 
         if let vcd =  viewControllerDetail {
             secondaryViewController = UINavigationController(rootViewController: vcd)
+            if let propertiesString = viewProperties[2] {
+                vcd.setProperties(props: propertiesString)
+            }
+            vcd.loadViewIfNeeded() //conditional in real app -- and will apply to supplementary too. no lazy loading
+            //This is needed when a native control is primary in a horizontally compact environment
+            //otherwise there may not be a webview to recieve and process messages from the primary
         }
 
         if let propertiesString = viewProperties[1] {
             viewControllerMaster?.setProperties(props: propertiesString)
-        }
-
-        if let propertiesString = viewProperties[2] {
-            viewControllerDetail?.setProperties(props: propertiesString)
         }
 
         if !isDouble {
