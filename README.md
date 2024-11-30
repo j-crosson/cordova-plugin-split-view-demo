@@ -12,6 +12,11 @@ The demo shows both new and classic view options in a modal view, supporting bot
 There is an option to make the split view a root view but this does not apply to the classic split view. An alternative option is to make the modal view full screen.  This option is used for the post-iOS14 demos. 
 To run the demo that simulates a root split view in classic split view, rename “indexRoot.html” to “index.html”. In "index.js", un-comment one of the lines indicated in the “root demo” comment.
 
+## New in 2.4.2
+* iOS 7 & 8 fixes
+
+A more flexible demo is in the future, but for now the demo likes to live in Documents/workspace  
+
 ## New in 2.4
 * New inset options
 * Hide-Navigation-Bar option
