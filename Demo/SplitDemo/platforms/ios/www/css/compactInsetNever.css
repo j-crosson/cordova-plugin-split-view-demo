@@ -1,0 +1,66 @@
+:root {
+    color-scheme: light dark;
+}
+@media (prefers-color-scheme: light) {
+    :root {
+        --color-scheme-background: white;
+        --color-scheme-backgroundPushed: darkgray;
+        --color-scheme-backgroundSelected: blue;
+        --color-scheme-text-color: black;
+        --color-scheme-text-selected: white;
+        --listcolor-scheme-background: #E4E4E4;
+    }
+}
+@media (prefers-color-scheme: dark) {
+    :root {
+      --color-scheme-background: black;
+      --color-scheme-backgroundPushed: darkgray;
+      --color-scheme-backgroundSelected: blue;
+      --color-scheme-text-color: white;
+      --color-scheme-text-selected: white;
+      --listcolor-scheme-background: #1E1E1E;
+    }
+}
+
+body{
+    -webkit-touch-callout: none;                /* prevent callout to copy image, etc when tap to hold */
+    -webkit-text-size-adjust: none;             /* prevent webkit from resizing text to fit */
+    -webkit-user-select: none;                  /* prevent copy paste, to allow, change 'none' to 'text' */
+    background: var(--listcolor-scheme-background);
+    font-family: system-ui, -apple-system, -apple-system-font, 'Segoe UI', 'Roboto', sans-serif;
+    height:100%;
+    width:100%;
+    margin:0px;
+    overflow: hidden;
+}
+
+html {
+    padding: env(safe-area-inset-top, 0px) env(safe-area-inset-right, 0px) env(safe-area-inset-bottom, 0px) env(safe-area-inset-left, 0px);
+}
+
+.center {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+       
+.centertxt {
+    font-size:50px;
+}
+
+.exitButton {
+    font-weight:bold;
+    font: -apple-system-headline;
+    font-size:2em;
+    border-radius: 25px;
+    border: 2px solid var(--color-scheme-backgroundPushed);
+}
+
+.exitFrame {
+    position: fixed;
+    top: 70%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
