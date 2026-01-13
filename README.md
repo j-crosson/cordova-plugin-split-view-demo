@@ -9,8 +9,16 @@ The easiest way to run the demo is to download (or clone) the repo and run the p
 
 The demo shows both new and classic view options in a modal view, supporting both light and dark mode. Typically a split view will be the app window's root view but a modal view allows all options to be presented in the demo without restart. 
 
-There is an option to make the split view a root view but this does not apply to the classic split view. An alternative option is to make the modal view full screen.  This option is used for the post-iOS14 demos. 
+There is an option to make the split view a root view but this does not apply to the classic split view. An alternate option is to make the modal view full screen.  This option is used for the post-iOS14 demos. 
 To run the demo that simulates a root split view in classic split view, rename “indexRoot.html” to “index.html”. In "index.js", un-comment one of the lines indicated in the “root demo” comment.
+
+## New in 2.4.3
+
+* Memory leak fix
+* A change in a split view behavior that makes the demo perform consistantly in both iOS 26 and earlier releases. (a "preferredDisplayMode" of "oneOverSecondary", replacing the previous option).
+* Uses latest versions of Cordova and Xcode 
+
+
 
 ## New in 2.4.2
 * iOS 7 & 8 fixes
@@ -190,4 +198,5 @@ Here’s the demo code that launches the iOS 14 embedded split view:
 @end
 
 ```
+
 
