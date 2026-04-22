@@ -41,36 +41,48 @@ body {
 
 .itemButtonChild {
     display: block;
-    width: 100%;
+    width: 90%;
     background: var(--color-scheme-background);
     color: var(--color-scheme-text-color);
     text-align: center;
-    border:none;
+    border: 1px solid rgba(128,128,128,0.5);
+    border-radius: 2em;
     font-weight:bold;
     font: -apple-system-headline;
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: .1em;
     padding: 14px 28px;
 }
 
 .pushedButtonChild {
     display: block;
-    width: 100%;
+    width: 90%;
     background: var(--color-scheme-backgroundPushed);
     color: var(--color-scheme-text-color);
     text-align: center;
-    border:none;
+    border: 1px solid rgba(128,128,128,0.5);
+    border-radius: 2em;
     font-weight:bold;
     font: -apple-system-headline;
     padding: 14px 28px;
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: .1em;
 }
 
 .itemSelected {
     display: block;
-    width: 100%;
+    width: 90%;
     background: var(--color-scheme-backgroundSelected);
     color: var(--color-scheme-text-selected);
     text-align: center;
-    border:none;
+    border: 1px solid rgba(128,128,128,0.5);
+    border-radius: 2em;
     font-weight:bold;
     font: -apple-system-headline;
     padding: 14px 28px;
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: .1em;
 }

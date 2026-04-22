@@ -10,11 +10,11 @@
 		09123B6787754A6C87608806 /* SplitChildViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7FCADFB541624EAEBC6DB26F /* SplitChildViews.swift */; };
 		137C21443FA142999AA00B45 /* TabBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 58A1968136CD40B48DB7A840 /* TabBar.swift */; };
 		1845541C98A2400C98DC0B64 /* SplitView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C85593EAB3C424EB4B21A67 /* SplitView.swift */; };
+		1A6230DE2F95813C00D4849E /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A6230DD2F95813C00D4849E /* SceneDelegate.swift */; };
 		1A71EE3F2F15B047008E23D2 /* tv.png in Resources */ = {isa = PBXBuildFile; fileRef = 1A71EE3E2F15B047008E23D2 /* tv.png */; };
 		33102306A3ED401190C26168 /* ViewProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 268766B84B944157968ED663 /* ViewProperties.swift */; };
 		463B6ACFE28B4EC19EAD48EF /* CollectionViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8539BE86ADBC4E44BD754325 /* CollectionViewController.swift */; };
 		752298FC6C09451EB3D236EA /* SView.m in Sources */ = {isa = PBXBuildFile; fileRef = 30A350261C134CA5BF75B3BA /* SView.m */; };
-		8D01A7159E39422EB3932F6A /* Embed.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF1F1511E496436DBF319693 /* Embed.swift */; };
 		907F98562C06B87200D2D242 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 907F98552C06B87200D2D242 /* PrivacyInfo.xcprivacy */; };
 		907F98662C06BC1B00D2D242 /* config.xml in Resources */ = {isa = PBXBuildFile; fileRef = 907F98652C06BC1B00D2D242 /* config.xml */; };
 		907F986A2C06BCD300D2D242 /* www in Resources */ = {isa = PBXBuildFile; fileRef = 907F98692C06BCD300D2D242 /* www */; };
@@ -23,7 +23,6 @@
 		90BD9B7C2C06907E000DEBAB /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 90BD9B7B2C06907E000DEBAB /* Assets.xcassets */; };
 		90BD9B7F2C06907E000DEBAB /* Base in Resources */ = {isa = PBXBuildFile; fileRef = 90BD9B7E2C06907E000DEBAB /* Base */; };
 		90CBB5282C06968500B805A2 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90CBB5272C06968500B805A2 /* AppDelegate.swift */; };
-		90CBB52A2C06968500B805A2 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90CBB5292C06968500B805A2 /* SceneDelegate.swift */; };
 		90CBB52C2C06968500B805A2 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90CBB52B2C06968500B805A2 /* ViewController.swift */; };
 		90D82ABD2CF19AEA001383CF /* CordovaPlugins in Frameworks */ = {isa = PBXBuildFile; productRef = 90D82ABC2CF19AEA001383CF /* CordovaPlugins */; };
 		9F7EEAC1FF9D4018A148126A /* SView.h in Sources */ = {isa = PBXBuildFile; fileRef = 883BE9ED0D674400A3238FDA /* SView.h */; };
@@ -49,6 +48,7 @@
 /* Begin PBXFileReference section */
 		001B362511CD44208E9A257E /* RootViewClassic.swift */ = {isa = PBXFileReference; fileEncoding = 4; includeInIndex = 0; lastKnownFileType = sourcecode.swift; name = RootViewClassic.swift; path = "cordova-plugin-splitview/RootViewClassic.swift"; sourceTree = "<group>"; };
 		0A9D08D459634C738DCB6D8C /* RootView.swift */ = {isa = PBXFileReference; fileEncoding = 4; includeInIndex = 0; lastKnownFileType = sourcecode.swift; name = RootView.swift; path = "cordova-plugin-splitview/RootView.swift"; sourceTree = "<group>"; };
+		1A6230DD2F95813C00D4849E /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
 		1A71EE3E2F15B047008E23D2 /* tv.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = tv.png; sourceTree = "<group>"; };
 		268766B84B944157968ED663 /* ViewProperties.swift */ = {isa = PBXFileReference; fileEncoding = 4; includeInIndex = 0; lastKnownFileType = sourcecode.swift; name = ViewProperties.swift; path = "cordova-plugin-splitview/ViewProperties.swift"; sourceTree = "<group>"; };
 		30A350261C134CA5BF75B3BA /* SView.m */ = {isa = PBXFileReference; fileEncoding = 4; includeInIndex = 0; lastKnownFileType = sourcecode.c.objc; name = SView.m; path = "cordova-plugin-splitview/SView.m"; sourceTree = "<group>"; };
@@ -72,7 +72,6 @@
 		90BD9B7E2C06907E000DEBAB /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/CDVLaunchScreen.storyboard; sourceTree = "<group>"; };
 		90BD9B802C06907E000DEBAB /* App-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "App-Info.plist"; sourceTree = "<group>"; };
 		90CBB5272C06968500B805A2 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
-		90CBB5292C06968500B805A2 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
 		90CBB52B2C06968500B805A2 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
 		90EB303B2C6DD83300CEEB2F /* build.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = build.xcconfig; path = cordova/build.xcconfig; sourceTree = SOURCE_ROOT; };
 		90EB303C2C6DD83300CEEB2F /* build-extras.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = "build-extras.xcconfig"; path = "cordova/build-extras.xcconfig"; sourceTree = SOURCE_ROOT; };
@@ -81,7 +80,6 @@
 		90F7E7002C6EB78900AD84C2 /* AppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
 		90F7E7012C6EB78900AD84C2 /* MainViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MainViewController.h; sourceTree = "<group>"; };
 		A8C14172EF4A44FC95D02DE6 /* LegacyTableView.swift */ = {isa = PBXFileReference; fileEncoding = 4; includeInIndex = 0; lastKnownFileType = sourcecode.swift; name = LegacyTableView.swift; path = "cordova-plugin-splitview/LegacyTableView.swift"; sourceTree = "<group>"; };
-		CF1F1511E496436DBF319693 /* Embed.swift */ = {isa = PBXFileReference; fileEncoding = 4; includeInIndex = 0; lastKnownFileType = sourcecode.swift; name = Embed.swift; path = "cordova-plugin-splitview/Embed.swift"; sourceTree = "<group>"; };
 		FB41C4C9068A465F9945B163 /* SplitBridge.h */ = {isa = PBXFileReference; fileEncoding = 4; includeInIndex = 0; lastKnownFileType = sourcecode.c.h; name = SplitBridge.h; path = "cordova-plugin-splitview/SplitBridge.h"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -115,7 +113,6 @@
 				0A9D08D459634C738DCB6D8C /* RootView.swift */,
 				001B362511CD44208E9A257E /* RootViewClassic.swift */,
 				7FCADFB541624EAEBC6DB26F /* SplitChildViews.swift */,
-				CF1F1511E496436DBF319693 /* Embed.swift */,
 				A8C14172EF4A44FC95D02DE6 /* LegacyTableView.swift */,
 				8539BE86ADBC4E44BD754325 /* CollectionViewController.swift */,
 				268766B84B944157968ED663 /* ViewProperties.swift */,
@@ -177,8 +174,8 @@
 			isa = PBXGroup;
 			children = (
 				90CBB5272C06968500B805A2 /* AppDelegate.swift */,
-				90CBB5292C06968500B805A2 /* SceneDelegate.swift */,
 				90CBB52B2C06968500B805A2 /* ViewController.swift */,
+				1A6230DD2F95813C00D4849E /* SceneDelegate.swift */,
 				90BD9B7D2C06907E000DEBAB /* CDVLaunchScreen.storyboard */,
 				90BD9B782C06907D000DEBAB /* Main.storyboard */,
 				90BD9B7B2C06907E000DEBAB /* Assets.xcassets */,
@@ -282,15 +279,14 @@
 			buildActionMask = 2147483647;
 			files = (
 				90CBB52C2C06968500B805A2 /* ViewController.swift in Sources */,
+				1A6230DE2F95813C00D4849E /* SceneDelegate.swift in Sources */,
 				90CBB5282C06968500B805A2 /* AppDelegate.swift in Sources */,
-				90CBB52A2C06968500B805A2 /* SceneDelegate.swift in Sources */,
 				1845541C98A2400C98DC0B64 /* SplitView.swift in Sources */,
 				137C21443FA142999AA00B45 /* TabBar.swift in Sources */,
 				C74A63E297584DC7AFA68769 /* Image.swift in Sources */,
 				CA6FEA621973417A98A82442 /* RootView.swift in Sources */,
 				A78F0D009CB340DEA00BF7D2 /* RootViewClassic.swift in Sources */,
 				09123B6787754A6C87608806 /* SplitChildViews.swift in Sources */,
-				8D01A7159E39422EB3932F6A /* Embed.swift in Sources */,
 				A6B658D281CD49F78E1958E8 /* LegacyTableView.swift in Sources */,
 				463B6ACFE28B4EC19EAD48EF /* CollectionViewController.swift in Sources */,
 				33102306A3ED401190C26168 /* ViewProperties.swift in Sources */,
@@ -480,6 +476,7 @@
 				INFOPLIST_KEY_UIMainStoryboardFile = Main;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				IPHONEOS_DEPLOYMENT_TARGET = 15.6;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -518,6 +515,7 @@
 				INFOPLIST_KEY_UIMainStoryboardFile = Main;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				IPHONEOS_DEPLOYMENT_TARGET = 15.6;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",

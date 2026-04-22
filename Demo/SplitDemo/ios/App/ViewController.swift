@@ -25,7 +25,17 @@ import Cordova
 @_objcImplementation
 #endif
 extension MainViewController {
+    
 }
 
 class ViewController: MainViewController {
 }
+
+// To demonstrate "embedding", comment out the preceeding code and replace with the following code.
+// You will also need to modify "SceneDelegate.swift" as instructed in that file.
+//
+
+/*
+class ViewController: RtViewController {
+}
+*/

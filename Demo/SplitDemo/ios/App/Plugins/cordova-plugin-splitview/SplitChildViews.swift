@@ -67,29 +67,46 @@ class SpViewControllerChild: CDVViewControllerI, UIScrollViewDelegate {
         }
     }
 
-   override func viewDidLoad() {
-       initNavBar()
-       launchView = UIView(frame: view.bounds)
-       launchView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
-       super.viewDidLoad()
-       view.backgroundColor = initialBackgroundColor
-       launchView.backgroundColor = initialBackgroundColor
-       view.addSubview(launchView)
+    override func viewDidLoad() {
+        initNavBar()
 
-       let wkWebView = webViewEngine.engineWebView as? WKWebView
-       if let scrollVw = wkWebView?.scrollView {
-           scrollVw.contentInsetAdjustmentBehavior = contentInsetAdjustmentBehavior
-           //No longer force this. Also set by user-specified Meta Tag (viewport-fit=cover) to ".never"
-           //but won't be set initially which can be an issue, hence the option here
-
-           // fixes scrolledge,large titles, etc.
-           scrollVw.delegate = self
-           scrollVw.showsHorizontalScrollIndicator = !horizScrollBarInvisible
-           scrollVw.showsVerticalScrollIndicator = !vertScrollBarInvisible
-           if preventHorizScroll {
-               scrollVw.isDirectionalLockEnabled = true //seems to slightly improve things
-           }
-       }
+        if childProperties.viewProps.useLaunchScreenAsBackground != true && showInitialSplashScreen == true {
+            launchView = UIView(frame: view.bounds)
+            launchView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
+        }
+      
+        super.viewDidLoad()
+        let viewbackgroundColor = childProperties.backgroundColor != nil ?  childProperties.backgroundColor :  initialBackgroundColor
+        view.isOpaque = false
+        
+        if childProperties.viewProps.useLaunchScreenAsBackground != true && showInitialSplashScreen == true {
+            launchView.backgroundColor = viewbackgroundColor
+            view.addSubview(launchView)
+        }
+        let wkWebView = webViewEngine.engineWebView as? WKWebView
+        if let scrollVw = wkWebView?.scrollView {
+            scrollVw.contentInsetAdjustmentBehavior = contentInsetAdjustmentBehavior
+            //No longer force this. Also set by user-specified Meta Tag (viewport-fit=cover) to ".never"
+            //but won't be set initially which can be an issue, hence the option here
+ 
+            // if webview background transparent, background set for launchview only, view is transparent
+            if let opaque = childProperties.viewProps.opaque {
+                if !opaque {
+                    wkWebView?.isOpaque = false
+                    view.backgroundColor = UIColor.clear
+                } else {
+                    view.backgroundColor = viewbackgroundColor
+                }
+            }
+                      
+            // fixes scrolledge,large titles, etc.
+            scrollVw.delegate = self
+            scrollVw.showsHorizontalScrollIndicator = !horizScrollBarInvisible
+            scrollVw.showsVerticalScrollIndicator = !vertScrollBarInvisible
+            if preventHorizScroll {
+                scrollVw.isDirectionalLockEnabled = true //seems to slightly improve things
+            }
+        }
     }
 
     //needed for correct scrolledge on rotation
@@ -183,6 +200,7 @@ class SpViewControllerChild: CDVViewControllerI, UIScrollViewDelegate {
             navigationController?.isNavigationBarHidden = childProperties.viewProps.hideNavigationBar ?? false
             navBarPrefersLargeTitles = childProperties.setNavBarAppearance(navController,
                                                                            appearance: childProperties.viewProps.navBarAppearance)
+            showInitialSplashScreen =? childProperties.viewProps.showInitialSplashScreen
         }
     }
 
@@ -299,7 +317,7 @@ class SpViewControllerChild: CDVViewControllerI, UIScrollViewDelegate {
     weak var delegate: itemSelectionDelegate?
 
     init(backgroundColor: UIColor?, page: String, isEmbedded: Bool) {
-         super.init(backgroundColor: backgroundColor, page: page)
+        super.init(backgroundColor: backgroundColor, page: page)
         embedded = isEmbedded
     }
 

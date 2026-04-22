@@ -9,6 +9,7 @@
         --color-scheme-text-color: black;
         --color-scheme-text-selected: white;
         --listcolor-scheme-background: #E4E4E4;
+        --background-gradient: radial-gradient(125% 125% at 50% 10%, #E4E4E4 40%, #222222 100%);
     }
 }
 @media (prefers-color-scheme: dark) {
@@ -19,6 +20,7 @@
       --color-scheme-text-color: white;
       --color-scheme-text-selected: white;
       --listcolor-scheme-background: #1E1E1E;
+      --background-gradient: radial-gradient(125% 125% at 50% 10%, #000000 40%, #777777 100%);
     }
 }
 
@@ -26,7 +28,7 @@ body {
     -webkit-touch-callout: none;                /* prevent callout to copy image, etc when tap to hold */
     -webkit-text-size-adjust: none;             /* prevent webkit from resizing text to fit */
     -webkit-user-select: none;                  /* prevent copy paste, to allow, change 'none' to 'text' */
-    background: var(--listcolor-scheme-background);
+    background: var(--background-gradient);
     font-family: system-ui, -apple-system, -apple-system-font, 'Segoe UI', 'Roboto', sans-serif;
     height:100%;
     width:100vw;
@@ -38,47 +40,9 @@ body {
     padding: env(safe-area-inset-top, 0px) env(safe-area-inset-right, 0px) env(safe-area-inset-bottom, 0px) env(safe-area-inset-left, 0px);
 }
 
-.itemButtonChild {
-    display: block;
-    width: 100%;
-    background: var(--color-scheme-background);
-    color: var(--color-scheme-text-color);
-    text-align: center;
-    border:none;
-    font-weight:bold;
-    font: -apple-system-headline;
-    padding: 14px 28px;
-}
-
-.pushedButtonChild {
-    display: block;
-    width: 100%;
-    background: var(--color-scheme-backgroundPushed);
-    color: var(--color-scheme-text-color);
-    text-align: center;
-    border:none;
-    font-weight:bold;
-    font: -apple-system-headline;
-    padding: 14px 28px;
-}
-
-.itemSelected {
-    display: block;
-    width: 100%;
-    background: var(--color-scheme-backgroundSelected);
-    color: var(--color-scheme-text-selected);
-    text-align: center;
-    border:none;
-    font-weight:bold;
-    font: -apple-system-headline;
-    padding: 14px 28px;
-}
-
 .center {
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
+    margin-top: 2em;
+    text-align: center;
 }
        
 .centertxt {

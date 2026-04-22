@@ -15,8 +15,6 @@ function recievedMessage(item)
 {
     if (!itemSelected)
     {
-        let viewPropJSON = '{"topColumnForCollapsingToProposedTopColumn":"default"}';
-        cordova.plugins.SplitView.setSplitViewProperties(viewPropJSON);
         itemSelected = true;
     }
 

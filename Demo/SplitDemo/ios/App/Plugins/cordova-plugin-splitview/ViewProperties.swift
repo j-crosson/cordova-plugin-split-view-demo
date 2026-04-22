@@ -195,6 +195,9 @@ struct ViewProperties: Codable {
     var backgroundColor: [CGFloat]?
     var backgroundColorLight: [CGFloat]?
     var backgroundColorDark: [CGFloat]?
+    var opaque: Bool?
+    var useLaunchScreenAsBackground: Bool?
+    var showInitialSplashScreen: Bool?
 
     var barButtonRight: BarButtonItem?
     var barButtonLeft: BarButtonItem?

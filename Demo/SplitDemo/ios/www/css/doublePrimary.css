@@ -5,7 +5,7 @@
     :root {
         --color-scheme-background: white;
         --color-scheme-backgroundPushed: darkgray;
-        --color-scheme-backgroundSelected: blue;
+        --color-scheme-backgroundSelected: #b4b4b4;
         --color-scheme-text-color: black;
         --color-scheme-text-selected: white;
         --listcolor-scheme-background: #E4E4E4;
@@ -15,9 +15,9 @@
     :root {
       --color-scheme-background: black;
       --color-scheme-backgroundPushed: darkgray;
-      --color-scheme-backgroundSelected: blue;
+      --color-scheme-backgroundSelected: #b4b4b4;
       --color-scheme-text-color: white;
-      --color-scheme-text-selected: white;
+      --color-scheme-text-selected: black;
       --listcolor-scheme-background: #1E1E1E;
     }
 }
@@ -29,43 +29,65 @@ body {
     background: var(--listcolor-scheme-background);
     font-family: system-ui, -apple-system, -apple-system-font, 'Segoe UI', 'Roboto', sans-serif;
     height:100%;
-    width:100%;
+    width:100vw;
     overflow: hidden;
     margin:0px;
 }
 
+
+.wrap {
+    padding: env(safe-area-inset-top, 0px) env(safe-area-inset-right, 0px) env(safe-area-inset-bottom, 0px) env(safe-area-inset-left, 0px);
+}
+
 .itemButtonChild {
     display: block;
-    width: 100%;
+    width: 90%;
     background: var(--color-scheme-background);
     color: var(--color-scheme-text-color);
     text-align: center;
-    border:none;
+    border: 1px solid rgba(128,128,128,0.5);
+    border-radius: 2em;
+    padding: 14px 28px;
     font-weight:bold;
     font: -apple-system-headline;
-    padding: 14px 28px;
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: .1em;
 }
-
 .pushedButtonChild {
     display: block;
-    width: 100%;
+    width: 90%;
     background: var(--color-scheme-backgroundPushed);
     color: var(--color-scheme-text-color);
     text-align: center;
-    border:none;
+    border: 1px solid rgba(128,128,128,0.5);
+    border-radius: 2em;
     font-weight:bold;
     font: -apple-system-headline;
     padding: 14px 28px;
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: .1em;
 }
 
 .itemSelected {
     display: block;
-    width: 100%;
+    width: 90%;
     background: var(--color-scheme-backgroundSelected);
     color: var(--color-scheme-text-selected);
     text-align: center;
-    border:none;
+    border: 1px solid rgba(128,128,128,0.5);
+    border-radius: 2em;
     font-weight:bold;
     font: -apple-system-headline;
     padding: 14px 28px;
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: .1em;
 }
+.center {
+    font-size: 1.5em;
+    margin-top: 2em;
+    text-align: center;
+}
+       
